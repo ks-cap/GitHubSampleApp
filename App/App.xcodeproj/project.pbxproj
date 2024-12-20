@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B26019CC2D15C8DE0016134D /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = B26019CB2D15C8DE0016134D /* Core */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B260194E2D1591D60016134D /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B26019CC2D15C8DE0016134D /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +38,7 @@
 			isa = PBXGroup;
 			children = (
 				B26019502D1591D60016134D /* App */,
+				B26019CA2D15C8DE0016134D /* Frameworks */,
 				B260194F2D1591D60016134D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +49,13 @@
 				B260194E2D1591D60016134D /* App.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B26019CA2D15C8DE0016134D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,6 +78,7 @@
 			);
 			name = App;
 			packageProductDependencies = (
+				B26019CB2D15C8DE0016134D /* Core */,
 			);
 			productName = App;
 			productReference = B260194E2D1591D60016134D /* App.app */;
@@ -339,6 +353,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B26019CB2D15C8DE0016134D /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B26019462D1591D50016134D /* Project object */;
 }

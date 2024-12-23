@@ -4,11 +4,15 @@ struct UsersScreen: View {
     @StateObject var store: UsersScreenStore
     
     var body: some View {        
-        NavigationView {
+        NavigationStack {
             List {
                 Section {
                     ForEach(store.users) { user in
-                        UserRowView(user: user)
+                        NavigationLink {
+                            UserBuilder.build(with: user)
+                        } label: {
+                            UserRowView(user: user)
+                        }
                     }
                     
                     if store.nextPage != nil {
@@ -20,9 +24,9 @@ struct UsersScreen: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .task { await store.onAppear() }
             .refreshable { await store.onRefresh() }
         }
-        .task { await store.onAppear() }
     }
 }
 
@@ -40,6 +44,7 @@ private struct UserRowView: View {
             .frame(width: 28, height: 28)
             
             Text(user.login)
+                .foregroundStyle(.black)
         }
     }
 }

@@ -23,7 +23,9 @@ extension GithubRequest {
         var request = URLRequest(url: url)
         request.url = components?.url
         request.httpMethod = method.rawValue
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(GithubAccessToken.shared.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
 
         return request
     }

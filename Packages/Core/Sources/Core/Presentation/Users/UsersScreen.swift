@@ -3,35 +3,26 @@ import SwiftUI
 struct UsersScreen: View {
     @StateObject var store: UsersScreenStore
     
-    var body: some View {
-        UsersScreenContent(
-            users: store.users,
-            isLoading: store.isLoading,
-            onAppear: store.onAppear
-        )
-    }
-}
-
-struct UsersScreenContent: View {
-    var users: [User]
-    var isLoading: Bool
-
-    var onAppear: @Sendable () async -> Void = {}
-    var onRefresh: @Sendable () async -> Void = {}
-
-    var body: some View {
+    var body: some View {        
         NavigationView {
             List {
                 Section {
-                    ForEach(users) { user in
+                    ForEach(store.users) { user in
                         UserRowView(user: user)
+                    }
+                    
+                    if store.nextPage != nil {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .progressViewStyle(.automatic)
+                            .task { await store.onReach() }
                     }
                 }
             }
             .listStyle(.insetGrouped)
-            .refreshable { await onRefresh() }
+            .refreshable { await store.onRefresh() }
         }
-        .task { await onAppear() }
+        .task { await store.onAppear() }
     }
 }
 

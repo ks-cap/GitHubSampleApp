@@ -11,17 +11,14 @@ protocol GithubRequest {
     var baseUrl: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
-    var queryItems: [URLQueryItem] { get }
 }
 
 extension GithubRequest {
     var baseUrl: URL { .init(string: "https://api.github.com")! }
-    var queryItems: [URLQueryItem] { [] }
 
-    func build() -> URLRequest {
-        let url = baseUrl.appendingPathComponent(path)
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        components?.queryItems = queryItems
+    func build(nextPage: Page?) -> URLRequest {
+        let url = nextPage?.url ?? baseUrl.appendingPathComponent(path)
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         
         var request = URLRequest(url: url)
         request.url = components?.url
@@ -31,20 +28,25 @@ extension GithubRequest {
         return request
     }
 
-    func response(from data: Data, urlResponse: URLResponse) throws -> Response {
-        let jsonDecoder = {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            return decoder
-        }()
+    func response(from data: Data, urlResponse: URLResponse) throws -> (response: Response, nextPage: Page?) {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         
         guard let statusCode = (urlResponse as? HTTPURLResponse)?.statusCode else {
             throw NSError()
         }
-        
+    
         switch statusCode {
         case 200..<300:
-            return try jsonDecoder.decode(Response.self, from: data)
+            let response = try decoder.decode(Response.self, from: data)
+            
+            var nextPage: Page?
+            if let urlResponse = urlResponse as? HTTPURLResponse, let link = urlResponse.value(forHTTPHeaderField: "Link") {
+                nextPage = Page(nextInLinkHeader: link)
+            }
+            
+            return (response: response, nextPage: nextPage)
+
         default:
             throw NSError()
         }

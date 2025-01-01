@@ -15,13 +15,10 @@ protocol GithubRequest {
 
 extension GithubRequest {
     var baseUrl: URL { .init(string: "https://api.github.com")! }
-
+    
     func build(nextPage: Page?) -> URLRequest {
         let url = nextPage?.url ?? baseUrl.appendingPathComponent(path)
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        
         var request = URLRequest(url: url)
-        request.url = components?.url
         request.httpMethod = method.rawValue
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(GithubAccessToken.shared.accessToken)", forHTTPHeaderField: "Authorization")

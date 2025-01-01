@@ -30,7 +30,7 @@ struct UsersScreen: View {
     }
 }
 
-private struct UserRowView: View {
+struct UserRowView: View {
     let user: User
     
     var body: some View {
@@ -44,7 +44,8 @@ private struct UserRowView: View {
             .frame(width: 28, height: 28)
             
             Text(user.login)
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
+                .font(.body)
         }
     }
 }

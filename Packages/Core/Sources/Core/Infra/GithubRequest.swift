@@ -37,17 +37,30 @@ extension GithubRequest {
     
         switch statusCode {
         case 200..<300:
-            let response = try decoder.decode(Response.self, from: data)
-            
-            var nextPage: Page?
-            if let urlResponse = urlResponse as? HTTPURLResponse, let link = urlResponse.value(forHTTPHeaderField: "Link") {
-                nextPage = Page(nextInLinkHeader: link)
+            do {
+                let response = try decoder.decode(Response.self, from: data)
+                
+                var nextPage: Page?
+                if let urlResponse = urlResponse as? HTTPURLResponse, let link = urlResponse.value(forHTTPHeaderField: "Link") {
+                    nextPage = Page(nextInLinkHeader: link)
+                }
+                
+                return (response: response, nextPage: nextPage)
+            } catch {
+                throw AppErrorType.decode
             }
+
+        case 400:
+            throw AppErrorType.badRequest
+
+        case 403:
+            throw AppErrorType.forbidden
             
-            return (response: response, nextPage: nextPage)
+        case 404:
+            throw AppErrorType.notFound
 
         default:
-            throw NSError()
+            throw AppErrorType.unknown
         }
     }
 }

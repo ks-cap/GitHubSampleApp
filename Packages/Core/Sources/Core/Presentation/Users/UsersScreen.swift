@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct UsersScreen: View {
-    @StateObject var store: UsersScreenStore
+    @Bindable var store: UsersScreenStore
     
     var body: some View {        
         NavigationStack {
@@ -19,13 +19,16 @@ struct UsersScreen: View {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                             .progressViewStyle(.automatic)
-                            .task { await store.onReach() }
+                            .task { await store.fetchNextPage() }
                     }
                 }
             }
             .listStyle(.insetGrouped)
-            .task { await store.onAppear() }
-            .refreshable { await store.onRefresh() }
+            .task { await store.fetchFirstPage() }
+            .refreshable { await store.fetchFirstPage() }
+            .alert(item: $store.error) {
+                Alert(title: Text($0.error.localizedDescription))
+            }
         }
     }
 }

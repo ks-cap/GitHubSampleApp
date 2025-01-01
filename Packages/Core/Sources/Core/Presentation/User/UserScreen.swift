@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct UserScreen: View {
-    @StateObject var store: UserScreenStore
-    
+    @Bindable var store: UserScreenStore
+
     var body: some View {
         List {
             Section {
@@ -14,7 +14,7 @@ struct UserScreen: View {
                     UserRepositoryRowView(
                         repository: repository,
                         onTapped: {
-                            store.onOpen(repository.htmlUrl)
+                            store.selectRepositoryUrl(repository.htmlUrl)
                         }
                     )
                 }
@@ -23,17 +23,20 @@ struct UserScreen: View {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                         .progressViewStyle(.automatic)
-                        .task { await store.onReach() }
+                        .task { await store.fetchNextPage() }
                 }
             }
         }
         .navigationTitle(store.user.login)
         .listStyle(.insetGrouped)
-        .task { await store.onAppear() }
-        .fullScreenCover(isPresented: $store.isSafariPresented) {
-            if let url = store.url {
+        .task { await store.fetchFirstPage() }
+        .fullScreenCover(isPresented: $store.isShowSafari) {
+            if let url = store.selectedUrl {
                 SafariView(url: url)
             }
+        }
+        .alert(item: $store.error) {
+            Alert(title: Text($0.error.localizedDescription))
         }
     }
 }

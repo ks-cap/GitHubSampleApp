@@ -2,14 +2,16 @@ import Foundation
 
 struct AppError: Identifiable {
     let id = UUID()
-    let error: AppErrorType
+    let error: Error
 
-    init(error: AppErrorType) {
+    init(error: Error) {
+        guard let error = error as? AppErrorType else { fatalError() }
         self.error = error
     }
 }
 
 enum AppErrorType: LocalizedError {
+    case invalidUrl
     case decode
     case badRequest
     case forbidden
@@ -18,6 +20,8 @@ enum AppErrorType: LocalizedError {
 
     var errorDescription: String? {
         switch self {
+        case .invalidUrl:
+            return "Invalid URL"
         case .badRequest:
             return "Bad Request"
         case .decode:

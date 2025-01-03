@@ -8,12 +8,11 @@ struct UserScreen: View {
             user: store.user,
             nextPage: store.nextPage,
             repositories: store.repositories,
-            selectedUrl: store.selectedUrl,
             onAppear: store.fetchFirstPage,
             onBottomReach: store.fetchNextPage,
-            onRepositoryTap: store.selectRepositoryUrl(_:),
+            onRepositoryTap: store.selectRepository(_:),
             error: $store.error,
-            isShowSafari: $store.isShowSafari
+            url: $store.url
         )
     }
 }
@@ -22,14 +21,13 @@ struct UserScreenContent: View {
     var user: User
     var nextPage: Page?
     var repositories: [UserRepository]
-    var selectedUrl: URL?
 
     var onAppear: @Sendable () async -> Void = {}
     var onBottomReach: @Sendable () async -> Void = {}
-    var onRepositoryTap: (String) -> Void = { _ in }
+    var onRepositoryTap: (UserRepository) -> Void = { _ in }
 
     @Binding var error: AppError?
-    @Binding var isShowSafari: Bool
+    @Binding var url: UserScreenStore.SelectUrl?
 
     var body: some View {
         List {
@@ -41,7 +39,7 @@ struct UserScreenContent: View {
                 ForEach(repositories) { repository in
                     UserRepositoryRowView(
                         repository: repository,
-                        onTapped: { onRepositoryTap(repository.htmlUrl) }
+                        onTapped: { onRepositoryTap(repository) }
                     )
                 }
                 
@@ -56,10 +54,8 @@ struct UserScreenContent: View {
         .navigationTitle(user.login)
         .listStyle(.insetGrouped)
         .task { await onAppear() }
-        .fullScreenCover(isPresented: $isShowSafari) {
-            if let url = selectedUrl {
-                SafariView(url: url)
-            }
+        .fullScreenCover(item: $url) {
+            SafariView(url: $0.url)
         }
         .alert(item: $error) {
             Alert(title: Text($0.error.localizedDescription))
@@ -127,11 +123,10 @@ struct UserRepositoryRowView: View {
         user: user,
         nextPage: nil,
         repositories: repositories,
-        selectedUrl: nil,
         onAppear: {},
         onBottomReach: {},
         onRepositoryTap: { _ in },
         error: .init(get: { nil }, set: { _ in }),
-        isShowSafari: .init(get: { false }, set: { _ in })
+        url: .init(get: { nil }, set: { _ in })
     )
 }

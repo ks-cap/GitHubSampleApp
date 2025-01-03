@@ -33,9 +33,7 @@ import Foundation
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-
-                    guard let errorType = error as? AppErrorType else { return }
-                    self.error = AppError(error: errorType)
+                    self.error = AppError(error: error)
                 }
             }
         }
@@ -57,9 +55,7 @@ import Foundation
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-
-                    guard let errorType = error as? AppErrorType else { return }
-                    self.error = AppError(error: errorType)
+                    self.error = AppError(error: error)
                 }
             }
         }

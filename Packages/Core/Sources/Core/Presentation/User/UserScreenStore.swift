@@ -8,19 +8,22 @@ import Foundation
     private(set) var nextPage: Page?
     private(set) var repositories: [UserRepository]
     private(set) var isLoading: Bool
-    private(set) var selectedUrl: URL?
 
     var error: AppError?
-    var isShowSafari: Bool
+    var url: SelectUrl?
+
+    struct SelectUrl: Identifiable {
+        let id = UUID()
+        let url: URL
+    }
 
     init(user: User, userRepositoryFetchInteractor: UserRepositoryFetchUseCase) {
         self.userRepositoryFetchInteractor = userRepositoryFetchInteractor
         self.user = user
         self.repositories = []
         self.isLoading = false
-        self.selectedUrl = nil
+        self.url = nil
         self.error = nil
-        self.isShowSafari = false
     }
     
     @Sendable func fetchFirstPage() async {
@@ -42,9 +45,7 @@ import Foundation
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-
-                    guard let errorType = error as? AppErrorType else { return }
-                    self.error = AppError(error: errorType)
+                    self.error = AppError(error: error)
                 }
             }
         }
@@ -69,16 +70,18 @@ import Foundation
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-
-                    guard let errorType = error as? AppErrorType else { return }
-                    self.error = AppError(error: errorType)
+                    self.error = AppError(error: error)
                 }
             }
         }
     }
     
-    func selectRepositoryUrl(_ htmlUrl: String) {
-        isShowSafari = true
-        selectedUrl = URL(string: htmlUrl)
+    func selectRepository(_ repository: UserRepository) {
+        do {
+            let url = try repository.url
+            self.url = .init(url: url)
+        } catch {
+            self.error = AppError(error: error)
+        }
     }
 }

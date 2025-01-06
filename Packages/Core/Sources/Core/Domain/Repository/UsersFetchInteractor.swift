@@ -18,8 +18,8 @@ final class UsersFetchInteractor: UsersFetchUseCase {
     }
     
     func fetch(with nextPage: Page?) async throws -> (users: [User], nextPage: Page?) {
-        let request = UsersFetchRequest()
-        let response = try await client.perform(request: request, nextPage: nextPage)
+        let request = UsersFetchRequest(page: nextPage)
+        let response = try await client.perform(request: request)
         return (users: response.response, nextPage: response.nextPage)
     }
 }

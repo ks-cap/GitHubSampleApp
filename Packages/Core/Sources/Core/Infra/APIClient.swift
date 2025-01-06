@@ -1,7 +1,7 @@
 import Foundation
 
 protocol APIClient: Sendable {
-    func perform<Request: GithubRequest>(request: Request, nextPage: Page?) async throws -> (response: Request.Response, nextPage: Page?)
+    func perform<Request: GithubRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?)
 }
 
 final class APIClientLive {
@@ -13,8 +13,8 @@ final class APIClientLive {
 }
 
 extension APIClientLive: APIClient {
-    func perform<Request: GithubRequest>(request: Request, nextPage: Page?) async throws -> (response: Request.Response, nextPage: Page?) {
-        let urlRequest = request.build(nextPage: nextPage)
+    func perform<Request: GithubRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?) {
+        let urlRequest = request.build()
         let (data, response) = try await session.data(for: urlRequest)
         return try request.response(from: data, urlResponse: response)
     }

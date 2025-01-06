@@ -11,12 +11,13 @@ protocol GithubRequest {
     var baseUrl: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
+    var nextPage: Page? { get }
 }
 
 extension GithubRequest {
     var baseUrl: URL { .init(string: "https://api.github.com")! }
-    
-    func build(nextPage: Page?) -> URLRequest {
+
+    func build() -> URLRequest {
         let url = nextPage?.url ?? baseUrl.appendingPathComponent(path)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue

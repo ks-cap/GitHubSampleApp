@@ -1,7 +1,8 @@
 import Foundation
 
 @MainActor
-@Observable final class UsersScreenStore {
+@Observable
+final class UsersScreenStore {
     private let usersFetchInteractor: UsersFetchUseCase
 
     private(set) var users: [User]
@@ -9,12 +10,14 @@ import Foundation
     private(set) var nextPage: Page?
    
     var error: AppError?
+    var isSetPresented: Bool
 
     init(usersFetchInteractor: UsersFetchUseCase) {
         self.usersFetchInteractor = usersFetchInteractor
         self.users = []
         self.isLoading = false
         self.error = nil
+        self.isSetPresented = false
     }
     
     @Sendable func fetchFirstPage() async {
@@ -22,20 +25,15 @@ import Foundation
         
         isLoading = true
 
-        Task.detached {
-            do {
-                let response = try await self.usersFetchInteractor.fetch()
-                await MainActor.run {
-                    self.users = response.users
-                    self.nextPage = response.nextPage
-                    self.isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    self.isLoading = false
-                    self.error = AppError(error: error)
-                }
-            }
+        do {
+            let response = try await usersFetchInteractor.execute()
+            
+            isLoading = false
+            users = response.users
+            nextPage = response.nextPage
+        } catch {
+            isLoading = false
+            self.error = AppError(error: error)
         }
     }
     
@@ -44,20 +42,19 @@ import Foundation
         
         isLoading = true
 
-        Task.detached {
-            do {
-                let response = try await self.usersFetchInteractor.fetch(with: nextPage)
-                await MainActor.run {
-                    self.users.append(contentsOf: response.users)
-                    self.nextPage = response.nextPage
-                    self.isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    self.isLoading = false
-                    self.error = AppError(error: error)
-                }
-            }
+        do {
+            let response = try await usersFetchInteractor.execute(with: nextPage)
+
+            isLoading = false
+            users.append(contentsOf: response.users)
+            self.nextPage = response.nextPage
+        } catch {
+            isLoading = false
+            self.error = AppError(error: error)
         }
+    }
+    
+    func onSettingsTapped() {
+        isSetPresented = true
     }
 }

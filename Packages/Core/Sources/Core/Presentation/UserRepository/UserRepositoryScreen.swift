@@ -1,15 +1,20 @@
 import SwiftUI
 
-struct UserScreen: View {
-    @Bindable var store: UserScreenStore
+struct UserRepositoryScreen: View {
+    @Bindable
+    var store: UserRepositoryScreenStore
 
     var body: some View {
-        UserScreenContent(
+        UserRepositoryScreenContent(
             user: store.user,
             nextPage: store.nextPage,
             repositories: store.repositories,
-            onAppear: store.fetchFirstPage,
-            onBottomReach: store.fetchNextPage,
+            onAppear: {
+                Task { await store.fetchFirstPage() }
+            },
+            onBottomReach: {
+                Task { await store.fetchNextPage() }
+            },
             onRepositoryTap: store.selectRepository(_:),
             error: $store.error,
             url: $store.url
@@ -17,17 +22,17 @@ struct UserScreen: View {
     }
 }
 
-struct UserScreenContent: View {
-    var user: User
-    var nextPage: Page?
-    var repositories: [UserRepository]
+struct UserRepositoryScreenContent: View {
+    let user: User
+    let nextPage: Page?
+    let repositories: [UserRepository]
 
-    var onAppear: @Sendable () async -> Void = {}
-    var onBottomReach: @Sendable () async -> Void = {}
-    var onRepositoryTap: (UserRepository) -> Void = { _ in }
+    let onAppear: () -> Void
+    let onBottomReach: () -> Void
+    let onRepositoryTap: (UserRepository) -> Void
 
     @Binding var error: AppError?
-    @Binding var url: UserScreenStore.SelectUrl?
+    @Binding var url: UserRepositoryScreenStore.SelectUrl?
 
     var body: some View {
         List {
@@ -47,13 +52,13 @@ struct UserScreenContent: View {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                         .progressViewStyle(.automatic)
-                        .task { await onBottomReach() }
+                        .onAppear(perform: onBottomReach)
                 }
             }
         }
-        .navigationTitle(user.login)
+        .navigationTitle("User")
         .listStyle(.insetGrouped)
-        .task { await onAppear() }
+        .onAppear(perform: onAppear)
         .fullScreenCover(item: $url) {
             SafariView(url: $0.url)
         }
@@ -119,7 +124,7 @@ struct UserRepositoryRowView: View {
         )
     }
 
-    UserScreenContent(
+    UserRepositoryScreenContent(
         user: user,
         nextPage: nil,
         repositories: repositories,

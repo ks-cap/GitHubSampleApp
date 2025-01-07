@@ -17,13 +17,16 @@ protocol GithubRequest {
 extension GithubRequest {
     var baseUrl: URL { .init(string: "https://api.github.com")! }
 
-    func build() -> URLRequest {
+    func build(accessToken: String?) -> URLRequest {
         let url = nextPage?.url ?? baseUrl.appendingPathComponent(path)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        request.setValue("Bearer \(GithubAccessToken.shared.accessToken)", forHTTPHeaderField: "Authorization")
         request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
+
+        if let accessToken = accessToken, !accessToken.isEmpty {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
 
         return request
     }
@@ -63,22 +66,5 @@ extension GithubRequest {
         default:
             throw AppErrorType.unknown
         }
-    }
-}
-
-final class GithubAccessToken {
-    nonisolated(unsafe) static let shared = GithubAccessToken()
-
-    let accessToken: String
-
-    private init() {
-        guard let path = Bundle.main.path(forResource: "GithubAccessToken", ofType: "txt"),
-              let token = try? String(contentsOfFile: path, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines),
-              !token.isEmpty
-        else {
-            fatalError("Need Github Access Token")
-        }
-        
-        accessToken = token
     }
 }

@@ -1,5 +1,5 @@
 protocol UserRepositoryFetchUseCase: Sendable {
-    func fetch(username: String, nextPage: Page?) async throws -> (repositories: [UserRepository], nextPage: Page?)
+    func execute(username: String, nextPage: Page?) async throws -> (repositories: [UserRepository], nextPage: Page?)
 }
 
 final class UserRepositoryFetchInteractor: UserRepositoryFetchUseCase {
@@ -9,7 +9,7 @@ final class UserRepositoryFetchInteractor: UserRepositoryFetchUseCase {
         self.client = client
     }
     
-    func fetch(username: String, nextPage: Page?) async throws -> (repositories: [UserRepository], nextPage: Page?) {
+    func execute(username: String, nextPage: Page?) async throws -> (repositories: [UserRepository], nextPage: Page?) {
         let request = UserRepositoryFetchRequest(username: username, page: nextPage)
         let response = try await client.perform(request: request)
         return (

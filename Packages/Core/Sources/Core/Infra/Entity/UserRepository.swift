@@ -1,6 +1,6 @@
 import Foundation
 
-struct UserRepository: Identifiable, Decodable, Hashable {
+struct UserRepository: Identifiable, Decodable, Hashable, Sendable {
     let id: Int
     let name: String
     let htmlUrl: String

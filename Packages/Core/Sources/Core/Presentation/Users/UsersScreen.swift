@@ -7,23 +7,33 @@ struct UsersScreen: View {
         UsersScreenContent(
             users: store.users,
             nextPage: store.nextPage,
-            onAppear: store.fetchFirstPage,
-            onRefresh: store.fetchFirstPage,
-            onBottomReach: store.fetchNextPage,
-            error: $store.error
+            onAppear: {
+                Task { await store.fetchFirstPage() }
+            },
+            onRefresh: {
+                Task { await store.fetchFirstPage() }
+            },
+            onBottomReach: {
+                Task { await store.fetchNextPage() }
+            },
+            onSettingsTap: store.onSettingsTapped,
+            error: $store.error,
+            isSetPresented: $store.isSetPresented
         )
     }
 }
 
 struct UsersScreenContent: View {
-    var users: [User] = []
-    var nextPage: Page?
+    let users: [User]
+    let nextPage: Page?
 
-    var onAppear: @Sendable () async -> Void = {}
-    var onRefresh: @Sendable () async -> Void = {}
-    var onBottomReach: @Sendable () async -> Void = {}
+    let onAppear: () -> Void
+    let onRefresh: () -> Void
+    let onBottomReach: () -> Void
+    let onSettingsTap: () -> Void
 
     @Binding var error: AppError?
+    @Binding var isSetPresented: Bool
 
     var body: some View {
         NavigationStack {
@@ -31,7 +41,7 @@ struct UsersScreenContent: View {
                 Section {
                     ForEach(users) { user in
                         NavigationLink {
-                            UserBuilder.build(with: user)
+                            UserRepositoryBuilder.build(with: user)
                         } label: {
                             UserRowView(user: user)
                         }
@@ -41,15 +51,28 @@ struct UsersScreenContent: View {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                             .progressViewStyle(.automatic)
-                            .task { await onBottomReach() }
+                            .onAppear(perform: onBottomReach)
                     }
                 }
             }
             .listStyle(.insetGrouped)
-            .task { await onAppear() }
-            .refreshable { await onRefresh() }
+            .onAppear(perform: onAppear)
+            .refreshable { onRefresh() }
             .alert(item: $error) {
                 Alert(title: Text($0.error.localizedDescription))
+            }
+            .toolbar(content: {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        onSettingsTap()
+                    } label: {
+                        Image(systemName: "gear")
+                    }
+                }
+            })
+            .navigationTitle("Users")
+            .sheet(isPresented: $isSetPresented) {
+                SettingsBuilder.build()
             }
         }
     }
@@ -91,6 +114,8 @@ struct UserRowView: View {
         onAppear: {},
         onRefresh: {},
         onBottomReach: {},
-        error: .init(get: { nil }, set: { _ in })
+        onSettingsTap: {},
+        error: .init(get: { nil }, set: { _ in }),
+        isSetPresented: .init(get: { false }, set: { _ in })
     )
 }

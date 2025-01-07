@@ -1,11 +1,11 @@
 protocol UsersFetchUseCase: Sendable {
-    func fetch() async throws -> (users: [User], nextPage: Page?)
-    func fetch(with nextPage: Page?) async throws -> (users: [User], nextPage: Page?)
+    func execute() async throws -> (users: [User], nextPage: Page?)
+    func execute(with nextPage: Page?) async throws -> (users: [User], nextPage: Page?)
 }
 
 extension UsersFetchUseCase {
-    func fetch() async throws -> (users: [User], nextPage: Page?) {
-        try await fetch(with: nil)
+    func execute() async throws -> (users: [User], nextPage: Page?) {
+        try await execute(with: nil)
     }
 
 }
@@ -17,7 +17,7 @@ final class UsersFetchInteractor: UsersFetchUseCase {
         self.client = client
     }
     
-    func fetch(with nextPage: Page?) async throws -> (users: [User], nextPage: Page?) {
+    func execute(with nextPage: Page?) async throws -> (users: [User], nextPage: Page?) {
         let request = UsersFetchRequest(page: nextPage)
         let response = try await client.perform(request: request)
         return (users: response.response, nextPage: response.nextPage)

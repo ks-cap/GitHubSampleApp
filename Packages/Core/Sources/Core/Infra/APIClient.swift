@@ -21,7 +21,26 @@ extension APIClientLive: APIClient {
     func perform<Request: GithubRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?) {
         let accessToken = await accessTokenStore.get()
         let urlRequest = request.build(accessToken: accessToken)
-        let (data, response) = try await session.data(for: urlRequest)
-        return try request.response(from: data, urlResponse: response)
+        let (data, urlResponse) = try await session.data(for: urlRequest)
+        
+        guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
+            throw AppErrorType.invalidResponseType
+        }
+
+#if DEBUG
+        logTracker(request: urlRequest, httpUrlResponse: httpUrlResponse, data: data)
+#endif
+
+        return try request.response(from: data, with: httpUrlResponse)
+    }
+}
+
+private extension APIClientLive {
+    func logTracker(request: URLRequest, httpUrlResponse: HTTPURLResponse, data: Data) {
+        logger.debug("""
+        🏁🏁🏁🏁🏁 [\(String(httpUrlResponse.statusCode))] \(request.debugDescription)
+        Headers: \(httpUrlResponse.allHeaderFields.map { "\($0): \($1)" })
+        Body: \(String(data: data, encoding: .utf8) ?? "")
+        """)
     }
 }

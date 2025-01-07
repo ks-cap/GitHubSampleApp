@@ -31,25 +31,24 @@ extension GithubRequest {
         return request
     }
 
-    func response(from data: Data, urlResponse: URLResponse) throws -> (response: Response, nextPage: Page?) {
+    func response(
+        from data: Data,
+        with httpUrlResponse: HTTPURLResponse
+    ) throws -> (response: Response, nextPage: Page?) {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        
-        guard let statusCode = (urlResponse as? HTTPURLResponse)?.statusCode else {
-            throw NSError()
-        }
-    
-        switch statusCode {
+
+        switch httpUrlResponse.statusCode {
         case 200..<300:
             do {
-                let response = try decoder.decode(Response.self, from: data)
+                let decoded = try decoder.decode(Response.self, from: data)
                 
                 var nextPage: Page?
-                if let urlResponse = urlResponse as? HTTPURLResponse, let link = urlResponse.value(forHTTPHeaderField: "Link") {
-                    nextPage = Page(nextInLinkHeader: link)
+                if let link = httpUrlResponse.value(forHTTPHeaderField: "Link") {
+                    nextPage = .init(nextInLinkHeader: link)
                 }
                 
-                return (response: response, nextPage: nextPage)
+                return (response: decoded, nextPage: nextPage)
             } catch {
                 throw AppErrorType.decode
             }

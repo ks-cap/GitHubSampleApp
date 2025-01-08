@@ -24,7 +24,7 @@ extension APIClientLive: APIClient {
         let (data, urlResponse) = try await session.data(for: urlRequest)
         
         guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
-            throw AppErrorType.invalidResponseType
+            throw AppErrorType.responseType
         }
 
 #if DEBUG
@@ -38,7 +38,7 @@ extension APIClientLive: APIClient {
 private extension APIClientLive {
     func logTracker(request: URLRequest, httpUrlResponse: HTTPURLResponse, data: Data) {
         logger.debug("""
-        🏁🏁🏁🏁🏁 [\(String(httpUrlResponse.statusCode))] \(request.debugDescription)
+        🏁🏁🏁🏁🏁 [\(String(httpUrlResponse.statusCode))] \(request.httpMethod ?? "") \(request.debugDescription)
         Headers: \(httpUrlResponse.allHeaderFields.map { "\($0): \($1)" })
         Body: \(String(data: data, encoding: .utf8) ?? "")
         """)

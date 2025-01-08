@@ -3,8 +3,7 @@ import KeychainAccess
 
 actor AccessTokenStore: Sendable {
     static let shared = AccessTokenStore(
-        keychain: .init(service: Const.service)
-            .accessibility(.whenUnlockedThisDeviceOnly)
+        keychain: .init(service: Const.service).accessibility(.whenUnlockedThisDeviceOnly)
     )
 
     private enum Const {

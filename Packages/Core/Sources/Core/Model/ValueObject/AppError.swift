@@ -12,7 +12,7 @@ struct AppError: Identifiable {
 
 enum AppErrorType: LocalizedError {
     case invalidUrl
-    case invalidResponseType
+    case responseType
     case decode
     case badRequest
     case forbidden
@@ -23,7 +23,7 @@ enum AppErrorType: LocalizedError {
         switch self {
         case .invalidUrl:
             return "Invalid URL"
-        case .invalidResponseType:
+        case .responseType:
             return "Invalid Response Type"
         case .badRequest:
             return "Bad Request"

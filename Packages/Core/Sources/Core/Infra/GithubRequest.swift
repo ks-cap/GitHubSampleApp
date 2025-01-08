@@ -23,6 +23,7 @@ extension GithubRequest {
         request.httpMethod = method.rawValue
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
+        request.timeoutInterval = .init(60)
 
         if let accessToken = accessToken, !accessToken.isEmpty {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")

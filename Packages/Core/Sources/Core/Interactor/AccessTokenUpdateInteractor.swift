@@ -1,3 +1,4 @@
+/// @mockable
 protocol AccessTokenUpdateUseCase: Sendable {
     func execute(with token: String) async
 }

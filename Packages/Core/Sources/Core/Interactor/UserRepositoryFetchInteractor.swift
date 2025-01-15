@@ -1,3 +1,4 @@
+/// @mockable
 protocol UserRepositoryFetchUseCase: Sendable {
     func execute(username: String, nextPage: Page?) async throws -> (repositories: [UserRepository], nextPage: Page?)
 }

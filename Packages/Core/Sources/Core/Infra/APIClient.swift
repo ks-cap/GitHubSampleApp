@@ -1,5 +1,6 @@
 import Foundation
 
+/// @mockable
 protocol APIClient: Sendable {
     func perform<Request: GithubRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?)
 }

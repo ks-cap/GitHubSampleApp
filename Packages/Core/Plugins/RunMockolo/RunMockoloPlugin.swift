@@ -11,6 +11,7 @@ import PackagePlugin
                 arguments: [
                     "-s", context.package.directoryURL.path(),
                     "-d", generatedSourcePath,
+                    "--mock-final"
                 ],
                 outputFilesDirectory: context.pluginWorkDirectoryURL
             ),

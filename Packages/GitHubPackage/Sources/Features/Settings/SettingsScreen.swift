@@ -18,7 +18,7 @@ package struct SettingsScreen: View {
     }
 }
 
-struct SettingsScreenContent: View {
+private struct SettingsScreenContent: View {
     @Environment(\.dismiss)
     private var dismiss: DismissAction
     
@@ -75,4 +75,13 @@ struct SettingsScreenContent: View {
             .onAppear(perform: onAppear)
         }
     }
+}
+
+#Preview {
+    SettingsScreenContent(
+        currentAccessToken: "currentAccessToken",
+        onAppear: {},
+        onSetTap: {},
+        draftAccessToken: "draftAccessToken"
+    )
 }

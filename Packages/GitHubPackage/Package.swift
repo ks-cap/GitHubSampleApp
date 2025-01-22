@@ -31,7 +31,8 @@ let package = Package(
             dependencies: [
                 "Model",
                 "UICore",
-                "UseCase"
+                "UseCase",
+                "SettingsFeature"
             ],
             path: "./Sources/Features/Users"
         ),

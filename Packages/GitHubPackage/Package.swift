@@ -9,10 +9,10 @@ let productionFeatures: [PackageDescription.Target.Dependency] = [
 ]
 
 let package = Package(
-    name: "Core",
+    name: "GitHubPackage",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "Core", targets: ["ProductionApp"])
+        .library(name: "GitHubPackage", targets: ["ProductionApp"])
     ],
     dependencies: [
         // Libraries
@@ -85,7 +85,7 @@ let package = Package(
             path: "./Sources/Core/KeychainAccess"
         ),
         .testTarget(
-            name: "StoreCoreTests",
+            name: "GitHubPackageTests",
             dependencies: ["KeychainAccessCore"]
         ),
         // Build Tools Plugin

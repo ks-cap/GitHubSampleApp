@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "container:App/App.xcodeproj">
+      location = "container:Production/Production.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:Packages/Core">
+      location = "container:Packages/GitHubPackage">
    </FileRef>
 </Workspace>

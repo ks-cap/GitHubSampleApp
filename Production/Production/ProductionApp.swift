@@ -2,7 +2,7 @@ import ProductionApp
 import SwiftUI
 
 @main
-struct AppApp: App {
+struct ProductionApp: App {
     var body: some Scene {
         WindowGroup {
             Window.build()

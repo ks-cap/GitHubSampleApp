@@ -1,4 +1,4 @@
-import Core
+import ProductionApp
 import SwiftUI
 
 @main

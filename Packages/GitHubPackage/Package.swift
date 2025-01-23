@@ -53,7 +53,9 @@ let package = Package(
                 "KeychainAccessCore"
             ],
             path: "./Sources/Infra/API",
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: [
+                .plugin(name: "RunMockolo")
+            ]
         ),
         .target(
             name: "UseCase",
@@ -63,7 +65,9 @@ let package = Package(
                 "KeychainAccessCore"
             ],
             path: "./Sources/Domain/UseCase",
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: [
+                .plugin(name: "RunMockolo")
+            ]
         ),
         .target(
             name: "Model",
@@ -87,9 +91,11 @@ let package = Package(
         ),
         .testTarget(
             name: "GitHubPackageTests",
-            dependencies: ["KeychainAccessCore"]
+            dependencies: [
+                "KeychainAccessCore"
+            ]
         ),
-        // Build Tools Plugin
+        // Build Tool Plugin
         .plugin(
             name: "RunMockolo",
             capability: .buildTool(),

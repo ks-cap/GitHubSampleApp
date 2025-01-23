@@ -10,7 +10,6 @@ extension UsersFetchUseCase {
     package func execute() async throws -> (users: [User], nextPage: Page?) {
         try await execute(with: nil)
     }
-
 }
 
 // MARK: - UsersFetchInteractor

@@ -5,8 +5,8 @@ package enum SettingsBuilder {
     @MainActor
     package static func build() -> SettingsScreen {
         .init(store: .init(
-            accessTokenFetchInteractor: AccessTokenFetchInteractor(),
-            accessTokenUpdateInteractor: AccessTokenUpdateInteractor()
+            accessTokenFetchUseCase: AccessTokenFetchInteractor(),
+            accessTokenUpdateUseCase: AccessTokenUpdateInteractor()
         ))
     }
 }

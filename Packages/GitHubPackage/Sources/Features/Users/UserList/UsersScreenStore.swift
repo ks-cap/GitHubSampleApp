@@ -5,7 +5,7 @@ import Model
 @MainActor
 @Observable
 final class UsersScreenStore {
-    private let usersFetchInteractor: UsersFetchUseCase
+    private let usersFetchUseCase: UsersFetchUseCase
 
     private(set) var users: [User]
     private(set) var isLoading: Bool
@@ -14,8 +14,8 @@ final class UsersScreenStore {
     var error: AppError?
     var isSetPresented: Bool
 
-    init(usersFetchInteractor: UsersFetchUseCase) {
-        self.usersFetchInteractor = usersFetchInteractor
+    init(usersFetchUseCase: UsersFetchUseCase) {
+        self.usersFetchUseCase = usersFetchUseCase
         self.users = []
         self.isLoading = false
         self.error = nil
@@ -28,7 +28,7 @@ final class UsersScreenStore {
         isLoading = true
 
         do {
-            let response = try await usersFetchInteractor.execute()
+            let response = try await usersFetchUseCase.execute()
             
             isLoading = false
             users = response.users
@@ -45,7 +45,7 @@ final class UsersScreenStore {
         isLoading = true
 
         do {
-            let response = try await usersFetchInteractor.execute(with: nextPage)
+            let response = try await usersFetchUseCase.execute(with: nextPage)
 
             isLoading = false
             users.append(contentsOf: response.users)

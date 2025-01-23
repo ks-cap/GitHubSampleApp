@@ -5,28 +5,28 @@ import Model
 @MainActor
 @Observable
 final class SettingsScreenStore {
-    private let accessTokenFetchInteractor: AccessTokenFetchUseCase
-    private let accessTokenUpdateInteractor: AccessTokenUpdateUseCase
+    private let accessTokenFetchUseCase: AccessTokenFetchUseCase
+    private let accessTokenUpdateUseCase: AccessTokenUpdateUseCase
 
     private(set) var currentAccessToken: String?
 
     var draftAccessToken: String
 
     init(
-        accessTokenFetchInteractor: AccessTokenFetchUseCase,
-        accessTokenUpdateInteractor: AccessTokenUpdateUseCase
+        accessTokenFetchUseCase: AccessTokenFetchUseCase,
+        accessTokenUpdateUseCase: AccessTokenUpdateUseCase
     ) {
-        self.accessTokenFetchInteractor = accessTokenFetchInteractor
-        self.accessTokenUpdateInteractor = accessTokenUpdateInteractor
+        self.accessTokenFetchUseCase = accessTokenFetchUseCase
+        self.accessTokenUpdateUseCase = accessTokenUpdateUseCase
         self.currentAccessToken = ""
         self.draftAccessToken = ""
     }
 
     func fetchAccessToken() async {
-        currentAccessToken = await accessTokenFetchInteractor.execute()
+        currentAccessToken = await accessTokenFetchUseCase.execute()
     }
 
     func updateAccessToken() async {
-        await accessTokenUpdateInteractor.execute(with: draftAccessToken)
+        await accessTokenUpdateUseCase.execute(with: draftAccessToken)
     }
 }

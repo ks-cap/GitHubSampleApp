@@ -5,7 +5,7 @@ import UseCase
 @MainActor
 @Observable
 final class UserRepositoryScreenStore {
-    private let userRepositoryFetchInteractor: UserRepositoryFetchUseCase
+    private let userRepositoryFetchUseCase: UserRepositoryFetchUseCase
     
     private(set) var user: User
     private(set) var nextPage: Page?
@@ -21,10 +21,10 @@ final class UserRepositoryScreenStore {
     }
 
     init(
-        userRepositoryFetchInteractor: UserRepositoryFetchUseCase,
+        userRepositoryFetchUseCase: UserRepositoryFetchUseCase,
         user: User
     ) {
-        self.userRepositoryFetchInteractor = userRepositoryFetchInteractor
+        self.userRepositoryFetchUseCase = userRepositoryFetchUseCase
         self.user = user
         self.repositories = []
         self.isLoading = false
@@ -38,7 +38,7 @@ final class UserRepositoryScreenStore {
         isLoading = true
 
         do {
-            let response = try await userRepositoryFetchInteractor.execute(username: user.login, nextPage: nextPage)
+            let response = try await userRepositoryFetchUseCase.execute(username: user.login, nextPage: nextPage)
             
             isLoading = false
             repositories = response.repositories
@@ -55,7 +55,7 @@ final class UserRepositoryScreenStore {
         isLoading = true
 
         do {
-            let response = try await userRepositoryFetchInteractor.execute(username: user.login, nextPage: nextPage)
+            let response = try await userRepositoryFetchUseCase.execute(username: user.login, nextPage: nextPage)
             
             isLoading = false
             repositories.append(contentsOf: response.repositories)

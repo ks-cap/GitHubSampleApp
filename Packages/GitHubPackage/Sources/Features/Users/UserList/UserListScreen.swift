@@ -1,4 +1,4 @@
-import GitHubData
+import GitHubCore
 import SettingsFeature
 import SwiftUI
 

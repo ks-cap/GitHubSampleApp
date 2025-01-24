@@ -1,5 +1,6 @@
 import KeychainAccessCore
 
+/// @mockable
 package protocol AccessTokenUpdateUseCase: Sendable {
     func execute(with token: String) async
 }

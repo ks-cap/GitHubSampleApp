@@ -29,7 +29,7 @@ let package = Package(
         .target(
             name: "UsersFeature",
             dependencies: [
-                "GitHubData",
+                "GitHubCore",
                 "UICore",
                 "SettingsFeature"
             ],
@@ -38,18 +38,18 @@ let package = Package(
         .target(
             name: "SettingsFeature",
             dependencies: [
-                "GitHubData"
+                "GitHubCore"
             ],
             path: "./Sources/Features/Settings"
         ),
         // Data layer
         .target(
-            name: "GitHubData",
+            name: "GitHubCore",
             dependencies: [
                 "LogCore",
                 "KeychainAccessCore"
             ],
-            path: "./Sources/Data/GitHub",
+            path: "./Sources/Core/GitHub",
             plugins: [
                 .plugin(name: "RunMockolo")
             ]

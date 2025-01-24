@@ -1,4 +1,4 @@
-import GitHubData
+import GitHubCore
 
 enum UserRepositoryBuilder {
     @MainActor

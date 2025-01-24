@@ -1,5 +1,5 @@
 import SwiftUI
-import GitHubData
+import GitHubCore
 import UICore
 
 struct UserRepositoryScreen: View {

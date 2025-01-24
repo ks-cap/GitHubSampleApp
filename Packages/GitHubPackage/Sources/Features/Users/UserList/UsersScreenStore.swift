@@ -1,5 +1,5 @@
 import Foundation
-import GitHubData
+import GitHubCore
 
 @MainActor
 @Observable

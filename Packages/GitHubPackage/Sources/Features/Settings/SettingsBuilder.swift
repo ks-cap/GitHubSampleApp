@@ -1,5 +1,5 @@
 import SwiftUI
-import GitHubData
+import GitHubCore
 
 package enum SettingsBuilder {
     @MainActor

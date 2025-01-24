@@ -1,4 +1,4 @@
-import GitHubData
+import GitHubCore
 
 package enum UserListBuilder {
     @MainActor

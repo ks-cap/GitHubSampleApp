@@ -1,5 +1,6 @@
 import KeychainAccessCore
 
+/// @mockable
 package protocol AccessTokenFetchUseCase: Sendable {
     func execute() async -> String?
 }

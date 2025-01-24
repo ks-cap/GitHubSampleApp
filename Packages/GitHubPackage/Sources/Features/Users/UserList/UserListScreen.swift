@@ -1,6 +1,7 @@
 import GitHubCore
 import SettingsFeature
 import SwiftUI
+import UICore
 
 package struct UserListScreen: View {
     @Bindable var store: UsersScreenStore
@@ -9,6 +10,7 @@ package struct UserListScreen: View {
         UserListScreenContent(
             users: store.users,
             nextPage: store.nextPage,
+            error: store.error,
             onAppear: {
                 Task { await store.fetchFirstPage() }
             },
@@ -18,8 +20,8 @@ package struct UserListScreen: View {
             onBottomReach: {
                 Task { await store.fetchNextPage() }
             },
-            onSettingsTap: store.onSettingsTapped,
-            error: $store.error,
+            onSettingsTap: store.onSettingsTap,
+            onErrorAlertDismiss: store.onErrorAlertDismiss,
             isSetPresented: $store.isSetPresented
         )
     }
@@ -28,13 +30,14 @@ package struct UserListScreen: View {
 private struct UserListScreenContent: View {
     let users: [User]
     let nextPage: Page?
+    let error: AppError?
 
     let onAppear: () -> Void
     let onRefresh: () -> Void
     let onBottomReach: () -> Void
     let onSettingsTap: () -> Void
+    let onErrorAlertDismiss: () -> Void
 
-    @Binding var error: AppError?
     @Binding var isSetPresented: Bool
 
     var body: some View {
@@ -60,9 +63,6 @@ private struct UserListScreenContent: View {
             .listStyle(.insetGrouped)
             .onAppear(perform: onAppear)
             .refreshable { onRefresh() }
-            .alert(item: $error) {
-                Alert(title: Text($0.error.localizedDescription))
-            }
             .toolbar(content: {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -73,6 +73,10 @@ private struct UserListScreenContent: View {
                 }
             })
             .navigationTitle("Users")
+            .errorAlert(
+                error: error,
+                onDismiss: { onErrorAlertDismiss() }
+            )
             .sheet(isPresented: $isSetPresented) {
                 SettingsBuilder.build()
             }
@@ -93,11 +97,12 @@ private struct UserListScreenContent: View {
     UserListScreenContent(
         users: users,
         nextPage: nil,
+        error: nil,
         onAppear: {},
         onRefresh: {},
         onBottomReach: {},
         onSettingsTap: {},
-        error: .init(get: { nil }, set: { _ in }),
+        onErrorAlertDismiss: {},
         isSetPresented: .init(get: { false }, set: { _ in })
     )
 }

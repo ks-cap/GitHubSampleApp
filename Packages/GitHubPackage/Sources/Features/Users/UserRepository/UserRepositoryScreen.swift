@@ -1,5 +1,5 @@
-import SwiftUI
 import GitHubCore
+import SwiftUI
 import UICore
 
 struct UserRepositoryScreen: View {
@@ -11,6 +11,8 @@ struct UserRepositoryScreen: View {
             user: store.user,
             nextPage: store.nextPage,
             repositories: store.repositories,
+            selectUrl: store.selectUrl,
+            error: store.error,
             onAppear: {
                 Task { await store.fetchFirstPage() }
             },
@@ -18,8 +20,8 @@ struct UserRepositoryScreen: View {
                 Task { await store.fetchNextPage() }
             },
             onRepositoryTap: store.selectRepository(_:),
-            error: $store.error,
-            url: $store.url
+            onErrorAlertDismiss: store.onErrorAlertDismiss,
+            onSafariDismiss: store.onSafariDismiss
         )
     }
 }
@@ -28,13 +30,14 @@ private struct UserRepositoryScreenContent: View {
     let user: User
     let nextPage: Page?
     let repositories: [UserRepository]
+    let selectUrl: URL?
+    let error: AppError?
 
     let onAppear: () -> Void
     let onBottomReach: () -> Void
     let onRepositoryTap: (UserRepository) -> Void
-
-    @Binding var error: AppError?
-    @Binding var url: UserRepositoryScreenStore.SelectUrl?
+    let onErrorAlertDismiss: () -> Void
+    let onSafariDismiss: () -> Void
 
     var body: some View {
         List {
@@ -61,12 +64,14 @@ private struct UserRepositoryScreenContent: View {
         .navigationTitle("User")
         .listStyle(.insetGrouped)
         .onAppear(perform: onAppear)
-        .fullScreenCover(item: $url) {
-            SafariView(url: $0.url)
-        }
-        .alert(item: $error) {
-            Alert(title: Text($0.error.localizedDescription))
-        }
+        .errorAlert(
+            error: error,
+            onDismiss: { onErrorAlertDismiss() }
+        )
+        .safariFullScreenCover(
+            url: selectUrl,
+            onDismiss: { onSafariDismiss() }
+        )
     }
 }
 
@@ -130,10 +135,12 @@ private struct UserRepositoryRowView: View {
         user: user,
         nextPage: nil,
         repositories: repositories,
+        selectUrl: nil,
+        error: nil,
         onAppear: {},
         onBottomReach: {},
         onRepositoryTap: { _ in },
-        error: .init(get: { nil }, set: { _ in }),
-        url: .init(get: { nil }, set: { _ in })
+        onErrorAlertDismiss: {},
+        onSafariDismiss: {}
     )
 }

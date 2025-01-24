@@ -1,25 +1,16 @@
 import Foundation
 
-package struct AppError: Identifiable {
-    package let id = UUID()
-    package let error: Error
-
-    package init(error: Error) {
-        guard let error = error as? AppErrorType else { fatalError() }
-        self.error = error
-    }
-}
-
-package enum AppErrorType: LocalizedError {
+package enum AppError: LocalizedError {
     case invalidUrl
     case responseType
     case decode
     case badRequest
     case forbidden
     case notFound
+    case server
     case unknown
 
-    package var errorDescription: String? {
+    package var failureReason: String? {
         switch self {
         case .invalidUrl:
             return "Invalid URL"
@@ -33,6 +24,8 @@ package enum AppErrorType: LocalizedError {
             return "Forbidden"
         case .notFound:
             return "Not Found"
+        case .server:
+            return "Server Error"
         case .unknown:
             return "Unknwon Error"
         }

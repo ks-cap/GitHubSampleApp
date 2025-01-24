@@ -51,20 +51,23 @@ extension APIRequest {
                 
                 return (response: decoded, nextPage: nextPage)
             } catch {
-                throw AppErrorType.decode
+                throw AppError.decode
             }
 
         case 400:
-            throw AppErrorType.badRequest
+            throw AppError.badRequest
 
         case 403:
-            throw AppErrorType.forbidden
+            throw AppError.forbidden
             
         case 404:
-            throw AppErrorType.notFound
+            throw AppError.notFound
+
+        case 500..<599:
+            throw AppError.server
 
         default:
-            throw AppErrorType.unknown
+            throw AppError.unknown
         }
     }
 }

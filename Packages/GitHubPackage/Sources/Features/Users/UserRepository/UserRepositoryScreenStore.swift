@@ -10,14 +10,8 @@ final class UserRepositoryScreenStore {
     private(set) var nextPage: Page?
     private(set) var repositories: [UserRepository]
     private(set) var isLoading: Bool
-
-    var error: AppError?
-    var url: SelectUrl?
-
-    struct SelectUrl: Identifiable {
-        let id = UUID()
-        let url: URL
-    }
+    private(set) var selectUrl: URL?
+    private(set) var error: AppError?
 
     init(
         userReposRepository: UserReposRepository,
@@ -27,7 +21,7 @@ final class UserRepositoryScreenStore {
         self.user = user
         self.repositories = []
         self.isLoading = false
-        self.url = nil
+        self.selectUrl = nil
         self.error = nil
     }
     
@@ -42,10 +36,10 @@ final class UserRepositoryScreenStore {
             isLoading = false
             repositories = response.repositories
             nextPage = response.nextPage
-        } catch {
+        } catch is AppError {
             isLoading = false
-            self.error = AppError(error: error)
-        }
+            self.error = error
+        } catch {}
     }
     
     @Sendable func fetchNextPage() async {
@@ -59,18 +53,26 @@ final class UserRepositoryScreenStore {
             isLoading = false
             repositories.append(contentsOf: response.repositories)
             self.nextPage = response.nextPage
-        } catch {
+        } catch is AppError {
             isLoading = false
-            self.error = AppError(error: error)
-        }
+            self.error = error
+        } catch {}
     }
     
     func selectRepository(_ repository: UserRepository) {
         do {
             let url = try repository.url
-            self.url = .init(url: url)
-        } catch {
-            self.error = AppError(error: error)
-        }
+            self.selectUrl = url
+        } catch is AppError {
+            self.error = error
+        } catch {}
+    }
+    
+    func onErrorAlertDismiss() {
+        error = nil
+    }
+    
+    func onSafariDismiss() {
+        selectUrl = nil
     }
 }

@@ -29,7 +29,7 @@ extension APIDefaultService: APIService {
         let (data, urlResponse) = try await session.data(for: urlRequest)
         
         guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
-            throw AppErrorType.responseType
+            throw AppError.responseType
         }
 
 #if DEBUG

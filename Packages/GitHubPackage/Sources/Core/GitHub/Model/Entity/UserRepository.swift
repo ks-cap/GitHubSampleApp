@@ -12,7 +12,7 @@ package struct UserRepository: Identifiable, Decodable, Hashable, Sendable {
     package var url: URL {
         get throws {
             guard let url = URL(string: htmlUrl) else {
-                throw AppErrorType.invalidUrl
+                throw AppError.invalidUrl
             }
             return url
         }

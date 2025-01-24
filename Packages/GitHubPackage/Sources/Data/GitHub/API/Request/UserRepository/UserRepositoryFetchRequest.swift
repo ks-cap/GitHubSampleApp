@@ -1,5 +1,3 @@
-import Model
-
 package struct UserRepositoryFetchRequest {
     let username: String
     let page: Page?

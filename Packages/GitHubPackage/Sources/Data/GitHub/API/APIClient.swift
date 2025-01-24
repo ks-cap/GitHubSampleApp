@@ -1,7 +1,6 @@
 import Foundation
 import KeychainAccessCore
 import LogCore
-import Model
 
 package protocol APIClient: Sendable {
     func perform<Request: APIRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?)

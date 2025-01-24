@@ -1,5 +1,3 @@
-import Model
-
 package struct UsersFetchRequest {
     let page: Page?
 

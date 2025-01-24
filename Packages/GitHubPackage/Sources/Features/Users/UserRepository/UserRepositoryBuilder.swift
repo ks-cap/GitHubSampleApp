@@ -1,5 +1,4 @@
-import Model
-import UseCase
+import GitHubData
 
 enum UserRepositoryBuilder {
     @MainActor

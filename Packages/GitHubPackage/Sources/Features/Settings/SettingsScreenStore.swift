@@ -1,6 +1,5 @@
 import Foundation
-import UseCase
-import Model
+import GitHubData
 
 @MainActor
 @Observable

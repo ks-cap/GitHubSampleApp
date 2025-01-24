@@ -1,5 +1,5 @@
 import SwiftUI
-import UseCase
+import GitHubData
 
 package enum SettingsBuilder {
     @MainActor

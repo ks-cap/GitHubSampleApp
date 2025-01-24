@@ -1,6 +1,4 @@
-import API
-import Model
-
+/// @mockable
 package protocol UsersFetchUseCase: Sendable {
     func execute() async throws -> (users: [User], nextPage: Page?)
     func execute(with nextPage: Page?) async throws -> (users: [User], nextPage: Page?)

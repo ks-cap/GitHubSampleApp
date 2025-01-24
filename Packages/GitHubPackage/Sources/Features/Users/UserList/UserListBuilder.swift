@@ -1,4 +1,4 @@
-import UseCase
+import GitHubData
 
 package enum UserListBuilder {
     @MainActor

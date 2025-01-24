@@ -1,4 +1,4 @@
-import Model
+import GitHubData
 import SettingsFeature
 import SwiftUI
 

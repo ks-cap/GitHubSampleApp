@@ -29,9 +29,8 @@ let package = Package(
         .target(
             name: "UsersFeature",
             dependencies: [
-                "Model",
+                "GitHubData",
                 "UICore",
-                "UseCase",
                 "SettingsFeature"
             ],
             path: "./Sources/Features/Users"
@@ -39,39 +38,21 @@ let package = Package(
         .target(
             name: "SettingsFeature",
             dependencies: [
-                "Model",
-                "UseCase"
+                "GitHubData"
             ],
             path: "./Sources/Features/Settings"
         ),
         // Data layer
         .target(
-            name: "API",
+            name: "GitHubData",
             dependencies: [
-                "Model",
                 "LogCore",
                 "KeychainAccessCore"
             ],
-            path: "./Sources/Infra/API",
+            path: "./Sources/Data/GitHub",
             plugins: [
                 .plugin(name: "RunMockolo")
             ]
-        ),
-        .target(
-            name: "UseCase",
-            dependencies: [
-                "API",
-                "Model",
-                "KeychainAccessCore"
-            ],
-            path: "./Sources/Domain/UseCase",
-            plugins: [
-                .plugin(name: "RunMockolo")
-            ]
-        ),
-        .target(
-            name: "Model",
-            path: "./Sources/Domain/Model"
         ),
         // Core layer
         .target(

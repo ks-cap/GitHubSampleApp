@@ -1,4 +1,4 @@
-import Model
+import GitHubData
 import SwiftUI
 
 struct UserRowView: View {

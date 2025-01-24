@@ -32,10 +32,13 @@ final class UsersScreenStore {
             isLoading = false
             users = response.users
             nextPage = response.nextPage
-        } catch is AppError {
+        } catch {
             isLoading = false
-            self.error = error
-        } catch {}
+
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
     }
     
     @Sendable func fetchNextPage() async {
@@ -49,10 +52,13 @@ final class UsersScreenStore {
             isLoading = false
             users.append(contentsOf: response.users)
             self.nextPage = response.nextPage
-        } catch is AppError {
+        } catch {
             isLoading = false
-            self.error = error
-        } catch {}
+
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
     }
     
     func onSettingsTap() {

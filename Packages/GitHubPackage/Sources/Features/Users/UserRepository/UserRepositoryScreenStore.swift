@@ -36,10 +36,13 @@ final class UserRepositoryScreenStore {
             isLoading = false
             repositories = response.repositories
             nextPage = response.nextPage
-        } catch is AppError {
+        } catch {
             isLoading = false
-            self.error = error
-        } catch {}
+
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
     }
     
     @Sendable func fetchNextPage() async {
@@ -53,19 +56,24 @@ final class UserRepositoryScreenStore {
             isLoading = false
             repositories.append(contentsOf: response.repositories)
             self.nextPage = response.nextPage
-        } catch is AppError {
+        } catch {
             isLoading = false
-            self.error = error
-        } catch {}
+            
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
     }
     
     func selectRepository(_ repository: UserRepository) {
         do {
             let url = try repository.url
             self.selectUrl = url
-        } catch is AppError {
-            self.error = error
-        } catch {}
+        } catch {
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
     }
     
     func onErrorAlertDismiss() {

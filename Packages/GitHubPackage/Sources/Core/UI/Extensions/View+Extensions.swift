@@ -12,9 +12,7 @@ extension View {
             ),
             error: error,
             actions: { _ in },
-            message: { error in
-                Text(error.failureReason ?? "")
-            }
+            message: { _ in }
         )
     }
 }

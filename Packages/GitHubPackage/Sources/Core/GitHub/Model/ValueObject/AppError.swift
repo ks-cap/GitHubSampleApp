@@ -10,7 +10,7 @@ package enum AppError: LocalizedError {
     case server
     case unknown
 
-    package var failureReason: String? {
+    package var errorDescription: String? {
         switch self {
         case .invalidUrl:
             return "Invalid URL"

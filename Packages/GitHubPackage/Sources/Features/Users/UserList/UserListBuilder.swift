@@ -3,6 +3,6 @@ import GitHubCore
 package enum UserListBuilder {
     @MainActor
     package static func build() -> UserListScreen {
-        .init(store: .init(usersFetchUseCase: UsersFetchInteractor()))
+        .init(store: .init(usersRepository: UsersDefaultRepository()))
     }
 }

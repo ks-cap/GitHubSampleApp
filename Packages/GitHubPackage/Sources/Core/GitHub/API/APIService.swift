@@ -3,28 +3,28 @@ import KeychainAccessCore
 import LogCore
 
 /// @mockable
-package protocol APIClient: Sendable {
+package protocol APIService: Sendable {
     func perform<Request: APIRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?)
 }
 
-package final class APIClientLive {
+// MARK: - APIDefaultService
+
+package final class APIDefaultService {
     private let session: URLSession
-    private let accessTokenClient: AccessTokenClient
+    private let keychainAccessClient: KeychainAccessClient
     
     package init(
         session: URLSession = .shared,
-        accessTokenClient: AccessTokenClient = AccessTokenClientLive.shared
+        keychainAccessClient: KeychainAccessClient = KeychainAccessDefaultClient.shared
     ) {
         self.session = session
-        self.accessTokenClient = accessTokenClient
+        self.keychainAccessClient = keychainAccessClient
     }
 }
 
-// MARK: - APIClientLive
-
-extension APIClientLive: APIClient {
+extension APIDefaultService: APIService {
     package func perform<Request: APIRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?) {
-        let accessToken = await accessTokenClient.get()
+        let accessToken = await keychainAccessClient.get()
         let urlRequest = request.build(accessToken: accessToken)
         let (data, urlResponse) = try await session.data(for: urlRequest)
         
@@ -40,7 +40,7 @@ extension APIClientLive: APIClient {
     }
 }
 
-extension APIClientLive {
+extension APIDefaultService {
     func logTracker(request: URLRequest, httpUrlResponse: HTTPURLResponse, data: Data) {
         Logger.standard.debug("""
         🏁🏁🏁🏁🏁 [\(String(httpUrlResponse.statusCode))] \(request.httpMethod ?? "") \(request.debugDescription)

@@ -4,7 +4,7 @@ import GitHubCore
 @MainActor
 @Observable
 final class UsersScreenStore {
-    private let usersFetchUseCase: UsersFetchUseCase
+    private let usersRepository: UsersRepository
 
     private(set) var users: [User]
     private(set) var isLoading: Bool
@@ -13,8 +13,8 @@ final class UsersScreenStore {
     var error: AppError?
     var isSetPresented: Bool
 
-    init(usersFetchUseCase: UsersFetchUseCase) {
-        self.usersFetchUseCase = usersFetchUseCase
+    init(usersRepository: UsersRepository) {
+        self.usersRepository = usersRepository
         self.users = []
         self.isLoading = false
         self.error = nil
@@ -27,7 +27,7 @@ final class UsersScreenStore {
         isLoading = true
 
         do {
-            let response = try await usersFetchUseCase.execute()
+            let response = try await usersRepository.fetch()
             
             isLoading = false
             users = response.users
@@ -44,7 +44,7 @@ final class UsersScreenStore {
         isLoading = true
 
         do {
-            let response = try await usersFetchUseCase.execute(with: nextPage)
+            let response = try await usersRepository.fetch(with: nextPage)
 
             isLoading = false
             users.append(contentsOf: response.users)

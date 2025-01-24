@@ -1,15 +1,15 @@
 import Foundation
 import KeychainAccess
 
-package protocol AccessTokenClient: Sendable {
+package protocol KeychainAccessClient: Sendable {
     func get() async -> String?
     func set(_ token: String) async
 }
 
-// MARK: - AccessTokenClientLive
+// MARK: - KeychainAccessDefaultClient
 
-package actor AccessTokenClientLive {
-    package static let shared = AccessTokenClientLive(
+package actor KeychainAccessDefaultClient {
+    package static let shared = KeychainAccessDefaultClient(
         keychain: .init(service: Const.service).accessibility(.whenUnlockedThisDeviceOnly)
     )
 
@@ -25,7 +25,7 @@ package actor AccessTokenClientLive {
     }
 }
 
-extension AccessTokenClientLive: AccessTokenClient {
+extension KeychainAccessDefaultClient: KeychainAccessClient {
     package func get() -> String? {
         try? keychain.get(Const.accessToken)
     }

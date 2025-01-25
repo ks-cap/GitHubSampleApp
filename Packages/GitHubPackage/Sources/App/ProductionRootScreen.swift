@@ -3,21 +3,12 @@ import UsersFeature
 import SettingsFeature
 import SwiftUI
 
-private enum TabSelecion: Hashable {
-    case users
-    case settings
-    
-    var title: String {
-        switch self {
-        case .users:
-            return "Users"
-        case .settings:
-            return "Settings"
-        }
-    }
-}
-
 public struct ProductionRootScreen: View {
+    private enum TabSelecion: Hashable {
+        case users
+        case settings
+    }
+
     @State private var currentTab: TabSelecion = .users
 
     public init() {}

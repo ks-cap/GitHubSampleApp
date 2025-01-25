@@ -1,13 +1,13 @@
 import Foundation
 import GitHubCore
+import UICore
 
 @MainActor
 @Observable
 final class UsersScreenStore {
     private let usersRepository: UsersRepository
 
-    private(set) var users: [User]
-    private(set) var isLoading: Bool
+    private(set) var viewState: LoadingState<[User]>
     private(set) var nextPage: Page?
     private(set) var error: AppError?
 
@@ -15,25 +15,23 @@ final class UsersScreenStore {
 
     init(usersRepository: UsersRepository) {
         self.usersRepository = usersRepository
-        self.users = []
-        self.isLoading = false
+        self.viewState = .idle
         self.error = nil
         self.isSetPresented = false
     }
     
     @Sendable func fetchFirstPage() async {
-        guard !isLoading else { return }
+        guard viewState != .loading else { return }
         
-        isLoading = true
+        viewState = .loading
 
         do {
             let response = try await usersRepository.fetch()
             
-            isLoading = false
-            users = response.users
+            viewState = .success(response.users)
             nextPage = response.nextPage
         } catch {
-            isLoading = false
+            viewState = .failure
 
             if let error = error as? AppError {
                 self.error = error
@@ -42,25 +40,36 @@ final class UsersScreenStore {
     }
     
     @Sendable func fetchNextPage() async {
-        guard !isLoading, let nextPage else { return }
-        
-        isLoading = true
+        guard case .success(let loaded) = viewState, let nextPage else { return }
 
         do {
             let response = try await usersRepository.fetch(with: nextPage)
-
-            isLoading = false
-            users.append(contentsOf: response.users)
+            let newUsers = loaded + response.users
+            
+            viewState = .success(newUsers)
             self.nextPage = response.nextPage
         } catch {
-            isLoading = false
-
             if let error = error as? AppError {
                 self.error = error
             }
         }
     }
     
+    @Sendable func refresh() async {
+        guard viewState != .loading else { return }
+
+        do {
+            let response = try await usersRepository.fetch()
+            
+            viewState = .success(response.users)
+            nextPage = response.nextPage
+        } catch {
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
+    }
+
     func onSettingsTap() {
         isSetPresented = true
     }

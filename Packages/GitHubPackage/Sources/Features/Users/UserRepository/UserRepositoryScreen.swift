@@ -7,22 +7,33 @@ struct UserRepositoryScreen: View {
     var store: UserRepositoryScreenStore
 
     var body: some View {
-        UserRepositoryScreenContent(
-            user: store.user,
-            nextPage: store.nextPage,
-            repositories: store.repositories,
-            selectUrl: store.selectUrl,
-            error: store.error,
-            onAppear: {
+        AsyncContentView(
+            state: store.viewState,
+            success: {
+                UserRepositoryScreenContent(
+                    user: store.user,
+                    nextPage: store.nextPage,
+                    repositories: $0,
+                    selectUrl: store.selectUrl,
+                    error: store.error,
+                    onRefresh: {
+                        Task { await store.refresh() }
+                    },
+                    onBottomReach: {
+                        Task { await store.fetchNextPage() }
+                    },
+                    onRepositoryTap: store.selectRepository(_:),
+                    onErrorAlertDismiss: store.onErrorAlertDismiss,
+                    onSafariDismiss: store.onSafariDismiss
+                )
+            },
+            onRetryTap: {
                 Task { await store.fetchFirstPage() }
-            },
-            onBottomReach: {
-                Task { await store.fetchNextPage() }
-            },
-            onRepositoryTap: store.selectRepository(_:),
-            onErrorAlertDismiss: store.onErrorAlertDismiss,
-            onSafariDismiss: store.onSafariDismiss
+            }
         )
+        .task {
+            await store.fetchFirstPage()
+        }
     }
 }
 
@@ -33,7 +44,7 @@ private struct UserRepositoryScreenContent: View {
     let selectUrl: URL?
     let error: AppError?
 
-    let onAppear: () -> Void
+    let onRefresh: () -> Void
     let onBottomReach: () -> Void
     let onRepositoryTap: (UserRepository) -> Void
     let onErrorAlertDismiss: () -> Void
@@ -63,7 +74,7 @@ private struct UserRepositoryScreenContent: View {
         }
         .navigationTitle("User")
         .listStyle(.insetGrouped)
-        .onAppear(perform: onAppear)
+        .refreshable { onRefresh() }
         .errorAlert(
             error: error,
             onDismiss: { onErrorAlertDismiss() }
@@ -137,7 +148,7 @@ private struct UserRepositoryRowView: View {
         repositories: repositories,
         selectUrl: nil,
         error: nil,
-        onAppear: {},
+        onRefresh: {},
         onBottomReach: {},
         onRepositoryTap: { _ in },
         onErrorAlertDismiss: {},

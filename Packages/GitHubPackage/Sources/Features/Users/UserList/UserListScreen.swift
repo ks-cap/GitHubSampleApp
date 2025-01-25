@@ -7,23 +7,31 @@ package struct UserListScreen: View {
     @Bindable var store: UsersScreenStore
 
     package var body: some View {
-        UserListScreenContent(
-            users: store.users,
-            nextPage: store.nextPage,
-            error: store.error,
-            onAppear: {
+        AsyncContentView(
+            state: store.viewState,
+            success: {
+                UserListScreenContent(
+                    users: $0,
+                    nextPage: store.nextPage,
+                    error: store.error,
+                    onRefresh: {
+                        Task { await store.refresh() }
+                    },
+                    onBottomReach: {
+                        Task { await store.fetchNextPage() }
+                    },
+                    onSettingsTap: store.onSettingsTap,
+                    onErrorAlertDismiss: store.onErrorAlertDismiss,
+                    isSetPresented: $store.isSetPresented
+                )
+            },
+            onRetryTap: {
                 Task { await store.fetchFirstPage() }
-            },
-            onRefresh: {
-                Task { await store.fetchFirstPage() }
-            },
-            onBottomReach: {
-                Task { await store.fetchNextPage() }
-            },
-            onSettingsTap: store.onSettingsTap,
-            onErrorAlertDismiss: store.onErrorAlertDismiss,
-            isSetPresented: $store.isSetPresented
+            }
         )
+        .task {
+            await store.fetchFirstPage()
+        }
     }
 }
 
@@ -32,7 +40,6 @@ private struct UserListScreenContent: View {
     let nextPage: Page?
     let error: AppError?
 
-    let onAppear: () -> Void
     let onRefresh: () -> Void
     let onBottomReach: () -> Void
     let onSettingsTap: () -> Void
@@ -45,9 +52,7 @@ private struct UserListScreenContent: View {
             List {
                 Section {
                     ForEach(users) { user in
-                        NavigationLink {
-                            UserRepositoryBuilder.build(with: user)
-                        } label: {
+                        NavigationLink(destination: UserRepositoryBuilder.build(with: user)) {
                             UserRowView(user: user)
                         }
                     }
@@ -61,7 +66,6 @@ private struct UserListScreenContent: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .onAppear(perform: onAppear)
             .refreshable { onRefresh() }
             .toolbar(content: {
                 ToolbarItem(placement: .primaryAction) {
@@ -98,7 +102,6 @@ private struct UserListScreenContent: View {
         users: users,
         nextPage: nil,
         error: nil,
-        onAppear: {},
         onRefresh: {},
         onBottomReach: {},
         onSettingsTap: {},

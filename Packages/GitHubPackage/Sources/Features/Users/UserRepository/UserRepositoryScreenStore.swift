@@ -1,5 +1,6 @@
 import Foundation
 import GitHubCore
+import UICore
 
 @MainActor
 @Observable
@@ -8,8 +9,7 @@ final class UserRepositoryScreenStore {
     
     private(set) var user: User
     private(set) var nextPage: Page?
-    private(set) var repositories: [UserRepository]
-    private(set) var isLoading: Bool
+    private(set) var viewState: LoadingState<[UserRepository]>
     private(set) var selectUrl: URL?
     private(set) var error: AppError?
 
@@ -19,25 +19,23 @@ final class UserRepositoryScreenStore {
     ) {
         self.userReposRepository = userReposRepository
         self.user = user
-        self.repositories = []
-        self.isLoading = false
+        self.viewState = .idle
         self.selectUrl = nil
         self.error = nil
     }
     
     @Sendable func fetchFirstPage() async {
-        guard !isLoading else { return }
+        guard viewState != .loading else { return }
         
-        isLoading = true
+        viewState = .loading
 
         do {
-            let response = try await userReposRepository.fetch(username: user.login, nextPage: nextPage)
+            let response = try await userReposRepository.fetch(username: user.login)
             
-            isLoading = false
-            repositories = response.repositories
+            viewState = .success(response.repositories)
             nextPage = response.nextPage
         } catch {
-            isLoading = false
+            viewState = .failure
 
             if let error = error as? AppError {
                 self.error = error
@@ -46,25 +44,36 @@ final class UserRepositoryScreenStore {
     }
     
     @Sendable func fetchNextPage() async {
-        guard !isLoading, let nextPage else { return }
-        
-        isLoading = true
+        guard case .success(let loaded) = viewState, let nextPage else { return }
 
         do {
             let response = try await userReposRepository.fetch(username: user.login, nextPage: nextPage)
-            
-            isLoading = false
-            repositories.append(contentsOf: response.repositories)
+            let newRepositories = loaded + response.repositories
+
+            viewState = .success(newRepositories)
             self.nextPage = response.nextPage
         } catch {
-            isLoading = false
-            
             if let error = error as? AppError {
                 self.error = error
             }
         }
     }
     
+    @Sendable func refresh() async {
+        guard viewState != .loading else { return }
+
+        do {
+            let response = try await userReposRepository.fetch(username: user.login)
+            
+            viewState = .success(response.repositories)
+            nextPage = response.nextPage
+        } catch {
+            if let error = error as? AppError {
+                self.error = error
+            }
+        }
+    }
+
     func selectRepository(_ repository: UserRepository) {
         do {
             let url = try repository.url

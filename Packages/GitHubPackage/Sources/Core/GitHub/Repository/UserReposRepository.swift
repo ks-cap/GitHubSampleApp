@@ -3,6 +3,12 @@ package protocol UserReposRepository: Sendable {
     func fetch(username: String, nextPage: Page?) async throws -> (repositories: [UserRepository], nextPage: Page?)
 }
 
+extension UserReposRepository {
+    package func fetch(username: String) async throws -> (repositories: [UserRepository], nextPage: Page?) {
+        try await fetch(username: username, nextPage: nil)
+    }
+}
+
 // MARK: - UserReposDefaultRepository
 
 package final class UserReposDefaultRepository {

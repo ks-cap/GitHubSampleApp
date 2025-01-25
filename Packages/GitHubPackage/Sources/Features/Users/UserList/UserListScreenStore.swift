@@ -4,7 +4,7 @@ import UICore
 
 @MainActor
 @Observable
-package final class UsersScreenStore {
+package final class UserListScreenStore {
     private let usersRepository: UsersRepository
 
     private(set) var viewState: LoadingState<[User]>
@@ -18,7 +18,7 @@ package final class UsersScreenStore {
     
     @Sendable func fetchFirstPage() async {
         guard viewState != .loading else { return }
-        
+
         viewState = .loading
 
         do {

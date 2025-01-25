@@ -24,7 +24,7 @@ final class UserRepositoryScreenStore {
     
     @Sendable func fetchFirstPage() async {
         guard viewState != .loading else { return }
-        
+
         viewState = .loading
 
         do {

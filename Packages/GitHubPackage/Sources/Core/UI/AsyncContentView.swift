@@ -34,7 +34,7 @@ package struct AsyncContentView<V: Equatable, Success: View>: View {
     package var body: some View {
         switch state {
         case .idle:
-            EmptyView()
+            Color.clear
 
         case .loading:
             ProgressView()

@@ -4,46 +4,33 @@ import SwiftUI
 import UICore
 
 package struct UserListScreen: View {
-    @Bindable private var store: UsersScreenStore
+    @Bindable private var store: UserListScreenStore
 
-    package init(store: UsersScreenStore) {
+    package init(store: UserListScreenStore) {
         self.store = store
     }
 
     package var body: some View {
-        // Workaround
-        UserListScreenContent(
-            users: store.viewState.value ?? [],
-            nextPage: store.nextPage,
-            error: store.error,
-            onRefresh: {
-                Task { await store.refresh() }
+        AsyncContentView(
+            state: store.viewState,
+            success: {
+                UserListScreenContent(
+                    users: $0,
+                    nextPage: store.nextPage,
+                    error: store.error,
+                    onRefresh: {
+                        Task { await store.refresh() }
+                    },
+                    onBottomReach: {
+                        Task { await store.fetchNextPage() }
+                    },
+                    onErrorAlertDismiss: store.onErrorAlertDismiss
+                )
             },
-            onBottomReach: {
-                Task { await store.fetchNextPage() }
-            },
-            onErrorAlertDismiss: store.onErrorAlertDismiss
+            onRetryTap: {
+                Task { await store.fetchFirstPage() }
+            }
         )
-//        AsyncContentView(
-//            state: store.viewState,
-//            success: {
-//                UserListScreenContent(
-//                    users: $0,
-//                    nextPage: store.nextPage,
-//                    error: store.error,
-//                    onRefresh: {
-//                        Task { await store.refresh() }
-//                    },
-//                    onBottomReach: {
-//                        Task { await store.fetchNextPage() }
-//                    },
-//                    onErrorAlertDismiss: store.onErrorAlertDismiss
-//                )
-//            },
-//            onRetryTap: {
-//                Task { await store.fetchFirstPage() }
-//            }
-//        )
         .task {
             await store.fetchFirstPage()
         }
@@ -73,7 +60,7 @@ private struct UserListScreenContent: View {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                             .progressViewStyle(.automatic)
-                            .onAppear(perform: onBottomReach)
+                            .task { onBottomReach() }
                     }
                 }
             }

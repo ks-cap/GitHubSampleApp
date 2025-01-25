@@ -3,13 +3,6 @@ import UsersFeature
 import SettingsFeature
 import SwiftUI
 
-public enum Window {
-    @MainActor
-    public static func build() -> some View {
-        UserListBuilder.build()
-    }
-}
-
 private enum TabSelecion: Hashable {
     case users
     case settings

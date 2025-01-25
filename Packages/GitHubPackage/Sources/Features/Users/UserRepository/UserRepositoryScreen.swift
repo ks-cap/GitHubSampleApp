@@ -3,8 +3,7 @@ import SwiftUI
 import UICore
 
 struct UserRepositoryScreen: View {
-    @Bindable
-    var store: UserRepositoryScreenStore
+    @Bindable var store: UserRepositoryScreenStore
 
     var body: some View {
         AsyncContentView(
@@ -68,7 +67,7 @@ private struct UserRepositoryScreenContent: View {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                         .progressViewStyle(.automatic)
-                        .onAppear(perform: onBottomReach)
+                        .task { onBottomReach() }
                 }
             }
         }

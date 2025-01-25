@@ -7,6 +7,15 @@ package enum LoadingState<V: Equatable>: Equatable {
     case failure
 }
 
+extension LoadingState {
+    package var value: V? {
+        guard case .success(let value) = self else {
+            return nil
+        }
+        return value
+    }
+}
+
 package struct AsyncContentView<V: Equatable, Success: View>: View {
     private let state: LoadingState<V>
     private let success: (V) -> Success

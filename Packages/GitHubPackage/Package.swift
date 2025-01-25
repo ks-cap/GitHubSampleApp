@@ -3,11 +3,6 @@
 
 import PackageDescription
 
-let productionFeatures: [PackageDescription.Target.Dependency] = [
-    "UsersFeature",
-    "SettingsFeature"
-]
-
 let package = Package(
     name: "GitHubPackage",
     platforms: [.iOS(.v18)],
@@ -22,7 +17,11 @@ let package = Package(
         // App layer
         .target(
             name: "ProductionApp",
-            dependencies: productionFeatures,
+            dependencies: [
+                "GitHubCore",
+                "UsersFeature",
+                "SettingsFeature"
+            ],
             path: "./Sources/App"
         ),
         // Feature layer

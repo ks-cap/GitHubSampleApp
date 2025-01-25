@@ -1,8 +1,11 @@
 import SwiftUI
 
 package struct SettingsScreen: View {
-    @Bindable
-    var store: SettingsScreenStore
+    @Bindable private var store: SettingsScreenStore
+
+    package init(store: SettingsScreenStore) {
+        self.store = store
+    }
 
     package var body: some View {
         SettingsScreenContent(

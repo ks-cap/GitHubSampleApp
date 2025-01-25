@@ -4,20 +4,16 @@ import UICore
 
 @MainActor
 @Observable
-final class UsersScreenStore {
+package final class UsersScreenStore {
     private let usersRepository: UsersRepository
 
     private(set) var viewState: LoadingState<[User]>
     private(set) var nextPage: Page?
     private(set) var error: AppError?
 
-    var isSetPresented: Bool
-
-    init(usersRepository: UsersRepository) {
+    package init(usersRepository: UsersRepository) {
         self.usersRepository = usersRepository
         self.viewState = .idle
-        self.error = nil
-        self.isSetPresented = false
     }
     
     @Sendable func fetchFirstPage() async {
@@ -68,10 +64,6 @@ final class UsersScreenStore {
                 self.error = error
             }
         }
-    }
-
-    func onSettingsTap() {
-        isSetPresented = true
     }
     
     func onErrorAlertDismiss() {

@@ -5,7 +5,8 @@ import SwiftUI
 struct ProductionApp: App {
     var body: some Scene {
         WindowGroup {
-            Window.build()
+            ProductionRootScreen()
+//            Window.build()
         }
     }
 }

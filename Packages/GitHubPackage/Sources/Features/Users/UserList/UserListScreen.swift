@@ -4,31 +4,46 @@ import SwiftUI
 import UICore
 
 package struct UserListScreen: View {
-    @Bindable var store: UsersScreenStore
+    @Bindable private var store: UsersScreenStore
+
+    package init(store: UsersScreenStore) {
+        self.store = store
+    }
 
     package var body: some View {
-        AsyncContentView(
-            state: store.viewState,
-            success: {
-                UserListScreenContent(
-                    users: $0,
-                    nextPage: store.nextPage,
-                    error: store.error,
-                    onRefresh: {
-                        Task { await store.refresh() }
-                    },
-                    onBottomReach: {
-                        Task { await store.fetchNextPage() }
-                    },
-                    onSettingsTap: store.onSettingsTap,
-                    onErrorAlertDismiss: store.onErrorAlertDismiss,
-                    isSetPresented: $store.isSetPresented
-                )
+        // Workaround
+        UserListScreenContent(
+            users: store.viewState.value ?? [],
+            nextPage: store.nextPage,
+            error: store.error,
+            onRefresh: {
+                Task { await store.refresh() }
             },
-            onRetryTap: {
-                Task { await store.fetchFirstPage() }
-            }
+            onBottomReach: {
+                Task { await store.fetchNextPage() }
+            },
+            onErrorAlertDismiss: store.onErrorAlertDismiss
         )
+//        AsyncContentView(
+//            state: store.viewState,
+//            success: {
+//                UserListScreenContent(
+//                    users: $0,
+//                    nextPage: store.nextPage,
+//                    error: store.error,
+//                    onRefresh: {
+//                        Task { await store.refresh() }
+//                    },
+//                    onBottomReach: {
+//                        Task { await store.fetchNextPage() }
+//                    },
+//                    onErrorAlertDismiss: store.onErrorAlertDismiss
+//                )
+//            },
+//            onRetryTap: {
+//                Task { await store.fetchFirstPage() }
+//            }
+//        )
         .task {
             await store.fetchFirstPage()
         }
@@ -42,17 +57,14 @@ private struct UserListScreenContent: View {
 
     let onRefresh: () -> Void
     let onBottomReach: () -> Void
-    let onSettingsTap: () -> Void
     let onErrorAlertDismiss: () -> Void
-
-    @Binding var isSetPresented: Bool
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     ForEach(users) { user in
-                        NavigationLink(destination: UserRepositoryBuilder.build(with: user)) {
+                        NavigationLink(value: user) {
                             UserRowView(user: user)
                         }
                     }
@@ -67,23 +79,14 @@ private struct UserListScreenContent: View {
             }
             .listStyle(.insetGrouped)
             .refreshable { onRefresh() }
-            .toolbar(content: {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        onSettingsTap()
-                    } label: {
-                        Image(systemName: "gear")
-                    }
-                }
-            })
             .navigationTitle("Users")
+            .navigationDestination(for: User.self) { user in
+                UserRepositoryBuilder.build(with: user)
+            }
             .errorAlert(
                 error: error,
                 onDismiss: { onErrorAlertDismiss() }
             )
-            .sheet(isPresented: $isSetPresented) {
-                SettingsBuilder.build()
-            }
         }
     }
 }
@@ -104,8 +107,6 @@ private struct UserListScreenContent: View {
         error: nil,
         onRefresh: {},
         onBottomReach: {},
-        onSettingsTap: {},
-        onErrorAlertDismiss: {},
-        isSetPresented: .init(get: { false }, set: { _ in })
+        onErrorAlertDismiss: {}
     )
 }

@@ -20,8 +20,6 @@ final class UserRepositoryScreenStore {
         self.userReposRepository = userReposRepository
         self.user = user
         self.viewState = .idle
-        self.selectUrl = nil
-        self.error = nil
     }
     
     @Sendable func fetchFirstPage() async {

@@ -3,14 +3,14 @@ import GitHubCore
 
 @MainActor
 @Observable
-final class SettingsScreenStore {
+package final class SettingsScreenStore {
     private let accessTokenRepository: AccessTokenRepository
 
     private(set) var currentAccessToken: String?
 
     var draftAccessToken: String
 
-    init(accessTokenRepository: AccessTokenRepository) {
+    package init(accessTokenRepository: AccessTokenRepository) {
         self.accessTokenRepository = accessTokenRepository
         self.currentAccessToken = ""
         self.draftAccessToken = ""

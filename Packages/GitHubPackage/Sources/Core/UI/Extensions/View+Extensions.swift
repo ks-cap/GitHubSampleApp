@@ -2,17 +2,17 @@ import SwiftUI
 
 extension View {
     package func errorAlert(
-        error: (some LocalizedError)?,
+        error: Error?,
         onDismiss: @escaping () -> Void
     ) -> some View {
         alert(
+            "Error",
             isPresented: .init(
                 get: { error != nil },
                 set: { _ in onDismiss() }
             ),
-            error: error,
-            actions: { _ in },
-            message: { _ in }
+            actions: {},
+            message: { Text(error?.localizedDescription ?? "") }
         )
     }
 }

@@ -11,7 +11,7 @@ final class UserRepositoryScreenStore {
     private(set) var nextPage: Page?
     private(set) var viewState: LoadingState<[UserRepository]>
     private(set) var selectUrl: URL?
-    private(set) var error: AppError?
+    private(set) var error: Error?
 
     init(
         userReposRepository: UserReposRepository,
@@ -34,10 +34,7 @@ final class UserRepositoryScreenStore {
             nextPage = response.nextPage
         } catch {
             viewState = .failure
-
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
     
@@ -51,9 +48,7 @@ final class UserRepositoryScreenStore {
             viewState = .success(newRepositories)
             self.nextPage = response.nextPage
         } catch {
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
     
@@ -66,9 +61,7 @@ final class UserRepositoryScreenStore {
             viewState = .success(response.repositories)
             nextPage = response.nextPage
         } catch {
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
 
@@ -77,9 +70,7 @@ final class UserRepositoryScreenStore {
             let url = try repository.url
             self.selectUrl = url
         } catch {
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
     

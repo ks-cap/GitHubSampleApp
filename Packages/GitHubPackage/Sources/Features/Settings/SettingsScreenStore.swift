@@ -5,22 +5,51 @@ import GitHubCore
 @Observable
 package final class SettingsScreenStore {
     private let accessTokenRepository: AccessTokenRepository
+    private let validator: GitHubValidator
 
-    private(set) var currentAccessToken: String?
+    private(set) var hasAccessToken: Bool
+    private(set) var error: Error?
 
-    var draftAccessToken: String
+    var isAccessTokenPresented: Bool
+    var accessToken: String
 
-    package init(accessTokenRepository: AccessTokenRepository) {
+    package init(
+        accessTokenRepository: AccessTokenRepository,
+        validator: GitHubValidator
+    ) {
         self.accessTokenRepository = accessTokenRepository
-        self.currentAccessToken = ""
-        self.draftAccessToken = ""
+        self.validator = validator
+        self.hasAccessToken = false
+        self.isAccessTokenPresented = false
+        self.accessToken = ""
     }
 
     func fetchAccessToken() async {
-        currentAccessToken = await accessTokenRepository.fetch()
+        do {
+            let currentAccessToken = try await accessTokenRepository.fetch()
+            
+            hasAccessToken = currentAccessToken?.isEmpty == false
+        } catch {
+            self.error = error
+        }
     }
 
     func updateAccessToken() async {
-        await accessTokenRepository.update(token: draftAccessToken)
+//        guard validator.validate(accessToken: accessToken) else {
+//            return
+//        }
+
+        do {
+            try await accessTokenRepository.update(token: accessToken)
+            
+            hasAccessToken = !accessToken.isEmpty
+            isAccessTokenPresented = true
+        } catch {
+            self.error = error
+        }
+    }
+    
+    func onErrorAlertDismiss() {
+        error = nil
     }
 }

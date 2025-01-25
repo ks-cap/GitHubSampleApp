@@ -2,8 +2,8 @@ import Foundation
 import KeychainAccess
 
 package protocol KeychainAccessClient: Sendable {
-    func get() async -> String?
-    func set(_ token: String) async
+    func get() async throws -> String?
+    func set(_ token: String) async throws
 }
 
 // MARK: - KeychainAccessDefaultClient
@@ -26,11 +26,11 @@ package actor KeychainAccessDefaultClient {
 }
 
 extension KeychainAccessDefaultClient: KeychainAccessClient {
-    package func get() -> String? {
-        try? keychain.get(Const.accessToken)
+    package func get() throws -> String? {
+        try keychain.get(Const.accessToken)
     }
     
-    package func set(_ token: String) {
-        try? keychain.set(token, key: Const.accessToken)
+    package func set(_ token: String) throws {
+        try keychain.set(token, key: Const.accessToken)
     }
 }

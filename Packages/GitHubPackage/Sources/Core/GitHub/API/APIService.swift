@@ -24,7 +24,7 @@ package final class APIDefaultService {
 
 extension APIDefaultService: APIService {
     package func perform<Request: APIRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?) {
-        let accessToken = await keychainAccessClient.get()
+        let accessToken = try await keychainAccessClient.get()
         let urlRequest = request.build(accessToken: accessToken)
         let (data, urlResponse) = try await session.data(for: urlRequest)
         

@@ -17,14 +17,12 @@ package struct UserListScreen: View {
                 UserListScreenContent(
                     users: $0,
                     nextPage: store.nextPage,
-                    error: store.error,
                     onRefresh: {
                         Task { await store.refresh() }
                     },
                     onBottomReach: {
                         Task { await store.fetchNextPage() }
-                    },
-                    onErrorAlertDismiss: store.onErrorAlertDismiss
+                    }
                 )
             },
             onRetryTap: {
@@ -34,17 +32,19 @@ package struct UserListScreen: View {
         .task {
             await store.fetchFirstPage()
         }
+        .errorAlert(
+            error: store.error,
+            onDismiss: store.onErrorAlertDismiss
+        )
     }
 }
 
 private struct UserListScreenContent: View {
     let users: [User]
     let nextPage: Page?
-    let error: AppError?
 
     let onRefresh: () -> Void
     let onBottomReach: () -> Void
-    let onErrorAlertDismiss: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -70,10 +70,6 @@ private struct UserListScreenContent: View {
             .navigationDestination(for: User.self) { user in
                 UserRepositoryBuilder.build(with: user)
             }
-            .errorAlert(
-                error: error,
-                onDismiss: { onErrorAlertDismiss() }
-            )
         }
     }
 }
@@ -91,9 +87,7 @@ private struct UserListScreenContent: View {
     UserListScreenContent(
         users: users,
         nextPage: nil,
-        error: nil,
         onRefresh: {},
-        onBottomReach: {},
-        onErrorAlertDismiss: {}
+        onBottomReach: {}
     )
 }

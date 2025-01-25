@@ -14,7 +14,6 @@ struct UserRepositoryScreen: View {
                     nextPage: store.nextPage,
                     repositories: $0,
                     selectUrl: store.selectUrl,
-                    error: store.error,
                     onRefresh: {
                         Task { await store.refresh() }
                     },
@@ -22,7 +21,6 @@ struct UserRepositoryScreen: View {
                         Task { await store.fetchNextPage() }
                     },
                     onRepositoryTap: store.selectRepository(_:),
-                    onErrorAlertDismiss: store.onErrorAlertDismiss,
                     onSafariDismiss: store.onSafariDismiss
                 )
             },
@@ -33,6 +31,10 @@ struct UserRepositoryScreen: View {
         .task {
             await store.fetchFirstPage()
         }
+        .errorAlert(
+            error: store.error,
+            onDismiss: store.onErrorAlertDismiss
+        )
     }
 }
 
@@ -41,12 +43,10 @@ private struct UserRepositoryScreenContent: View {
     let nextPage: Page?
     let repositories: [UserRepository]
     let selectUrl: URL?
-    let error: AppError?
 
     let onRefresh: () -> Void
     let onBottomReach: () -> Void
     let onRepositoryTap: (UserRepository) -> Void
-    let onErrorAlertDismiss: () -> Void
     let onSafariDismiss: () -> Void
 
     var body: some View {
@@ -74,10 +74,6 @@ private struct UserRepositoryScreenContent: View {
         .navigationTitle("User")
         .listStyle(.insetGrouped)
         .refreshable { onRefresh() }
-        .errorAlert(
-            error: error,
-            onDismiss: { onErrorAlertDismiss() }
-        )
         .safariFullScreenCover(
             url: selectUrl,
             onDismiss: { onSafariDismiss() }
@@ -146,11 +142,9 @@ private struct UserRepositoryRowView: View {
         nextPage: nil,
         repositories: repositories,
         selectUrl: nil,
-        error: nil,
         onRefresh: {},
         onBottomReach: {},
         onRepositoryTap: { _ in },
-        onErrorAlertDismiss: {},
         onSafariDismiss: {}
     )
 }

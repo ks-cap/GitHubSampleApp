@@ -20,7 +20,10 @@ public struct ProductionRootScreen: View {
             }
             
             Tab("Settings", systemImage: "list.bullet", value: .settings) {
-                SettingsScreen(store: .init(accessTokenRepository: AccessTokenDefaultRepository()))
+                SettingsScreen(store: .init(
+                    accessTokenRepository: AccessTokenDefaultRepository(),
+                    validator: GitHubDefaultValidator()
+                ))
             }
         }
     }

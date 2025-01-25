@@ -9,7 +9,7 @@ package final class UserListScreenStore {
 
     private(set) var viewState: LoadingState<[User]>
     private(set) var nextPage: Page?
-    private(set) var error: AppError?
+    private(set) var error: Error?
 
     package init(usersRepository: UsersRepository) {
         self.usersRepository = usersRepository
@@ -28,10 +28,7 @@ package final class UserListScreenStore {
             nextPage = response.nextPage
         } catch {
             viewState = .failure
-
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
     
@@ -45,9 +42,7 @@ package final class UserListScreenStore {
             viewState = .success(newUsers)
             self.nextPage = response.nextPage
         } catch {
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
     
@@ -60,9 +55,7 @@ package final class UserListScreenStore {
             viewState = .success(response.users)
             nextPage = response.nextPage
         } catch {
-            if let error = error as? AppError {
-                self.error = error
-            }
+            self.error = error
         }
     }
     

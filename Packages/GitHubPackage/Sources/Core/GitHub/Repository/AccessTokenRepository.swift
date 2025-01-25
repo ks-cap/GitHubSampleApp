@@ -2,8 +2,8 @@ import KeychainAccessCore
 
 /// @mockable
 package protocol AccessTokenRepository: Sendable {
-    func fetch() async -> String?
-    func update(token: String) async
+    func fetch() async throws -> String?
+    func update(token: String) async throws
 }
 
 // MARK: - AccessTokenDefaultRepository
@@ -17,11 +17,11 @@ package final class AccessTokenDefaultRepository {
 }
 
 extension AccessTokenDefaultRepository: AccessTokenRepository {
-    package func fetch() async -> String? {
-        await client.get()
+    package func fetch() async throws -> String? {
+        try await client.get()
     }
 
-    package func update(token: String) async {
-        await client.set(token)
+    package func update(token: String) async throws {
+        try await client.set(token)
     }
 }

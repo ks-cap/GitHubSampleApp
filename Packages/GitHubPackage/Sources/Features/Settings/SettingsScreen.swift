@@ -1,4 +1,6 @@
+import GitHubCore
 import SwiftUI
+import UICore
 
 package struct SettingsScreen: View {
     @Bindable private var store: SettingsScreenStore
@@ -9,82 +11,98 @@ package struct SettingsScreen: View {
 
     package var body: some View {
         SettingsScreenContent(
-            currentAccessToken: store.currentAccessToken,
-            onAppear: {
-                Task { await store.fetchAccessToken() }
-            },
-            onSetTap: {
+            hasAccessToken: store.hasAccessToken,
+            onSaveTap: {
                 Task { await store.updateAccessToken() }
             },
-            draftAccessToken: store.draftAccessToken
+            onResetTap: {
+                Task { await store.updateAccessToken() }
+            },
+            isAccessTokenPresented: $store.isAccessTokenPresented,
+            accessToken: $store.accessToken
         )
+        .errorAlert(
+            error: store.error,
+            onDismiss: store.onErrorAlertDismiss
+        )
+        .task { await store.fetchAccessToken() }
     }
 }
 
 private struct SettingsScreenContent: View {
-    @Environment(\.dismiss)
-    private var dismiss: DismissAction
-    
-    let currentAccessToken: String?
-    let onAppear: () -> Void
-    let onSetTap: () -> Void
+    let hasAccessToken: Bool
 
-    @State var draftAccessToken: String
+    let onSaveTap: () -> Void
+    let onResetTap: () -> Void
+
+    @Binding var isAccessTokenPresented: Bool
+    @Binding var accessToken: String
 
     var body: some View {
         NavigationView {
             Form {
                 Section {
                     VStack(alignment: .leading, spacing: 24) {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Set your GitHub's Personal Access Token")
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Access Token")
                                 .font(.headline)
                             
-                            if let currentAccessToken = currentAccessToken, !currentAccessToken.isEmpty {
-                                Text("Current: \(currentAccessToken)")
-                                    .font(.caption)
-                            }
+                            Text(hasAccessToken ? "設定済み" : "未設定")
+                                .font(.caption)
                         }
                     }
                 }
 
                 Section {
-                    TextField("Personal Access Token", text: $draftAccessToken)
+                    TextField("Enter new Personal Access Token", text: $accessToken)
                         .keyboardType(.asciiCapable)
+                        .disableAutocorrection(true)
                 }
 
                 Section {
                     Button {
-                        onSetTap()
-                        dismiss()
+                        onSaveTap()
                     } label: {
-                        Text("Set")
+                        Text("Save")
                             .fontWeight(.bold)
                             .padding(4)
                     }
-                    .disabled(draftAccessToken.isEmpty)
+                    .disabled(accessToken.isEmpty)
                 }
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
+                
+                if hasAccessToken {
+                    Section {
+                        Button {
+                            accessToken.removeAll()
+                            onResetTap()
+                        } label: {
+                            Text("Reset")
+                                .fontWeight(.bold)
+                                .foregroundStyle(.red)
+                                .padding(4)
+                        }
                     }
                 }
             }
             .navigationTitle("Settings")
-            .onAppear(perform: onAppear)
+            .alert(
+                "Personal Access Token",
+                isPresented: $isAccessTokenPresented,
+                actions: {},
+                message: {
+                    Text("Updated!")
+                }
+            )
         }
     }
 }
 
 #Preview {
     SettingsScreenContent(
-        currentAccessToken: "currentAccessToken",
-        onAppear: {},
-        onSetTap: {},
-        draftAccessToken: "draftAccessToken"
+        hasAccessToken: true,
+        onSaveTap: {},
+        onResetTap: {},
+        isAccessTokenPresented: .init(get: { false }, set: { _ in }),
+        accessToken: .init(get: { "" }, set: { _ in })
     )
 }

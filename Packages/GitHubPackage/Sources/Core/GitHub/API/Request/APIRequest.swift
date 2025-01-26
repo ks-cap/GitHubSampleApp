@@ -45,7 +45,7 @@ extension APIRequest {
                 let decoded = try decoder.decode(Response.self, from: data)
                 
                 var nextPage: Page?
-                if let link = httpUrlResponse.value(forHTTPHeaderField: "Link") {
+                if let link = httpUrlResponse.value(forHTTPHeaderField: Page.Const.httpHeaderField) {
                     nextPage = .init(nextInLinkHeader: link)
                 }
                 
@@ -54,14 +54,8 @@ extension APIRequest {
                 throw AppError.decode
             }
 
-        case 400:
-            throw AppError.badRequest
-
-        case 403:
-            throw AppError.forbidden
-            
-        case 404:
-            throw AppError.notFound
+        case 400..<499:
+            throw AppError.client
 
         case 500..<599:
             throw AppError.server

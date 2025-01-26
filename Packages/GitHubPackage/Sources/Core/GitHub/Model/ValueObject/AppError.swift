@@ -4,9 +4,7 @@ package enum AppError: LocalizedError {
     case invalidUrl
     case responseType
     case decode
-    case badRequest
-    case forbidden
-    case notFound
+    case client
     case server
     case unknown
 
@@ -16,14 +14,10 @@ package enum AppError: LocalizedError {
             return "Invalid URL"
         case .responseType:
             return "Invalid Response Type"
-        case .badRequest:
-            return "Bad Request"
         case .decode:
             return "Decode Error"
-        case .forbidden:
-            return "Forbidden"
-        case .notFound:
-            return "Not Found"
+        case .client:
+            return "Client Error"
         case .server:
             return "Server Error"
         case .unknown:

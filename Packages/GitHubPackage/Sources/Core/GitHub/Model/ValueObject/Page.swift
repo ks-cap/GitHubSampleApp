@@ -1,6 +1,10 @@
 import Foundation
 
 package struct Page {
+    struct Const {
+        static let httpHeaderField = "Link"
+    }
+
     package let url: URL
     
     /// Create from a link header received via API.

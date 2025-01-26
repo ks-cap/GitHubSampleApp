@@ -10,7 +10,7 @@ struct UserRepositoryScreen: View {
             state: store.viewState,
             success: {
                 UserRepositoryScreenContent(
-                    user: store.user,
+                    user: store.argument.user,
                     nextPage: store.nextPage,
                     repositories: $0,
                     selectUrl: store.selectUrl,

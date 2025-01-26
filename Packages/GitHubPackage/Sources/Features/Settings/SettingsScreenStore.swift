@@ -14,12 +14,13 @@ package final class SettingsScreenStore {
     var accessToken: String
 
     package init(
-        accessTokenRepository: AccessTokenRepository,
-        validator: GitHubValidator
+        accessTokenRepository: AccessTokenRepository = AccessTokenDefaultRepository(),
+        validator: GitHubValidator = GitHubDefaultValidator()
     ) {
         self.accessTokenRepository = accessTokenRepository
         self.validator = validator
         self.hasAccessToken = false
+        self.error = nil
         self.isAccessTokenPresented = false
         self.accessToken = ""
     }

@@ -11,9 +11,10 @@ package final class UserListScreenStore {
     private(set) var nextPage: Page?
     private(set) var error: Error?
 
-    package init(usersRepository: UsersRepository) {
+    package init(usersRepository: UsersRepository = UsersDefaultRepository()) {
         self.usersRepository = usersRepository
         self.viewState = .idle
+        self.error = nil
     }
     
     @Sendable func fetchFirstPage() async {

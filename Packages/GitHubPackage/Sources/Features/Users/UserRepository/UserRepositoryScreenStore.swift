@@ -5,21 +5,28 @@ import UICore
 @MainActor
 @Observable
 final class UserRepositoryScreenStore {
+    let argument: Argument
     private let userReposRepository: UserReposRepository
-    
-    private(set) var user: User
-    private(set) var nextPage: Page?
+
     private(set) var viewState: LoadingState<[UserRepository]>
+    private(set) var nextPage: Page?
     private(set) var selectUrl: URL?
     private(set) var error: Error?
 
+    struct Argument {
+        let user: User
+    }
+
     init(
-        userReposRepository: UserReposRepository,
-        user: User
+        argument: Argument,
+        userReposRepository: UserReposRepository = UserReposDefaultRepository()
     ) {
         self.userReposRepository = userReposRepository
-        self.user = user
+        self.argument = argument
         self.viewState = .idle
+        self.nextPage = nil
+        self.selectUrl = nil
+        self.error = nil
     }
     
     @Sendable func fetchFirstPage() async {
@@ -28,7 +35,7 @@ final class UserRepositoryScreenStore {
         viewState = .loading
 
         do {
-            let response = try await userReposRepository.fetch(username: user.login)
+            let response = try await userReposRepository.fetch(username: argument.user.login)
             
             viewState = .success(response.repositories)
             nextPage = response.nextPage
@@ -42,7 +49,7 @@ final class UserRepositoryScreenStore {
         guard case .success(let loaded) = viewState, let nextPage else { return }
 
         do {
-            let response = try await userReposRepository.fetch(username: user.login, nextPage: nextPage)
+            let response = try await userReposRepository.fetch(username: argument.user.login, nextPage: nextPage)
             let newRepositories = loaded + response.repositories
 
             viewState = .success(newRepositories)
@@ -56,7 +63,7 @@ final class UserRepositoryScreenStore {
         guard viewState != .loading else { return }
 
         do {
-            let response = try await userReposRepository.fetch(username: user.login)
+            let response = try await userReposRepository.fetch(username: argument.user.login)
             
             viewState = .success(response.repositories)
             nextPage = response.nextPage

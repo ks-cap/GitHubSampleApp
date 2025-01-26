@@ -12,34 +12,39 @@ package struct SettingsScreen: View {
     package var body: some View {
         SettingsScreenContent(
             hasAccessToken: store.hasAccessToken,
+            error: store.error,
+            onAppear: {
+                Task { await store.fetchAccessToken() }
+            },
             onSaveTap: {
                 Task { await store.updateAccessToken() }
             },
             onResetTap: {
                 Task { await store.updateAccessToken() }
             },
+            onErrorAlertDismiss: {
+                Task { store.onErrorAlertDismiss() }
+            },
             isAccessTokenPresented: $store.isAccessTokenPresented,
             accessToken: $store.accessToken
         )
-        .errorAlert(
-            error: store.error,
-            onDismiss: store.onErrorAlertDismiss
-        )
-        .task { await store.fetchAccessToken() }
     }
 }
 
 private struct SettingsScreenContent: View {
     let hasAccessToken: Bool
+    let error: Error?
 
+    let onAppear: () -> Void
     let onSaveTap: () -> Void
     let onResetTap: () -> Void
+    let onErrorAlertDismiss: () -> Void
 
     @Binding var isAccessTokenPresented: Bool
     @Binding var accessToken: String
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section {
                     VStack(alignment: .leading, spacing: 24) {
@@ -93,6 +98,11 @@ private struct SettingsScreenContent: View {
                     Text("Updated!")
                 }
             )
+            .errorAlert(
+                error: error,
+                onDismiss: onErrorAlertDismiss
+            )
+            .onAppear(perform: onAppear)
         }
     }
 }
@@ -100,8 +110,11 @@ private struct SettingsScreenContent: View {
 #Preview {
     SettingsScreenContent(
         hasAccessToken: true,
+        error: nil,
+        onAppear: {},
         onSaveTap: {},
         onResetTap: {},
+        onErrorAlertDismiss: {},
         isAccessTokenPresented: .init(get: { false }, set: { _ in }),
         accessToken: .init(get: { "" }, set: { _ in })
     )

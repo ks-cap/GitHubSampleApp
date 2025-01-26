@@ -16,14 +16,11 @@ public struct ProductionRootScreen: View {
     public var body: some View {
         TabView(selection: $currentTab) {
             Tab("Users", systemImage: "list.bullet", value: .users) {
-                UserListScreen(store: .init(usersRepository: UsersDefaultRepository()))
+                UserListScreen(store: .init())
             }
             
-            Tab("Settings", systemImage: "list.bullet", value: .settings) {
-                SettingsScreen(store: .init(
-                    accessTokenRepository: AccessTokenDefaultRepository(),
-                    validator: GitHubDefaultValidator()
-                ))
+            Tab("Settings", systemImage: "gearshape", value: .settings) {
+                SettingsScreen(store: .init())
             }
         }
     }

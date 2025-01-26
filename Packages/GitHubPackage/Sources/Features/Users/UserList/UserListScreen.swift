@@ -68,7 +68,7 @@ private struct UserListScreenContent: View {
             .refreshable { onRefresh() }
             .navigationTitle("Users")
             .navigationDestination(for: User.self) { user in
-                UserRepositoryBuilder.build(with: user)
+                UserRepositoryScreen(store: .init(argument: .init(user: user)))
             }
         }
     }

@@ -24,6 +24,11 @@ let package = Package(
             ],
             path: "./Sources/App"
         ),
+        // Build layer
+        .target(
+            name: "Build",
+            path: "./Sources/Build"
+        ),
         // Feature layer
         .target(
             name: "UsersFeature",
@@ -45,6 +50,7 @@ let package = Package(
         .target(
             name: "GitHubCore",
             dependencies: [
+                "Build",
                 "LogCore",
                 "KeychainAccessCore"
             ],

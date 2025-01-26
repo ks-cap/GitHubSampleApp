@@ -1,3 +1,4 @@
+import Build
 import Foundation
 
 package enum HTTPMethod: String {
@@ -7,18 +8,15 @@ package enum HTTPMethod: String {
 
 package protocol APIRequest {
     associatedtype Response: Decodable
-    
-    var baseUrl: URL { get }
+
     var path: String { get }
     var method: HTTPMethod { get }
     var nextPage: Page? { get }
 }
 
 extension APIRequest {
-    package var baseUrl: URL { .init(string: "https://api.github.com")! }
-
-    package func build(accessToken: String?) -> URLRequest {
-        let url = nextPage?.url ?? baseUrl.appendingPathComponent(path)
+    package func build(_ config: BuildConfig, accessToken: String?) -> URLRequest {
+        let url = nextPage?.url ?? config.baseURL().appendingPathComponent(path)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")

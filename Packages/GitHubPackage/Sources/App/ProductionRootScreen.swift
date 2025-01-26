@@ -1,4 +1,3 @@
-import GitHubCore
 import UsersFeature
 import SettingsFeature
 import SwiftUI
@@ -8,10 +7,12 @@ public struct ProductionRootScreen: View {
         case users
         case settings
     }
+   
+    @State private var currentTab: TabSelecion
 
-    @State private var currentTab: TabSelecion = .users
-
-    public init() {}
+    public init() {
+        currentTab = .users
+    }
 
     public var body: some View {
         TabView(selection: $currentTab) {

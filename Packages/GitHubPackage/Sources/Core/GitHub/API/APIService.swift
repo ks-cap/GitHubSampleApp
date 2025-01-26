@@ -1,3 +1,4 @@
+import Build
 import Foundation
 import KeychainAccessCore
 import LogCore
@@ -11,13 +12,16 @@ package protocol APIService: Sendable {
 
 package final class APIDefaultService {
     private let session: URLSession
+    private let buildConfig: BuildConfig
     private let keychainAccessClient: KeychainAccessClient
-    
+
     package init(
         session: URLSession = .shared,
+        buildConfig: BuildConfig = .live,
         keychainAccessClient: KeychainAccessClient = KeychainAccessDefaultClient.shared
     ) {
         self.session = session
+        self.buildConfig = buildConfig
         self.keychainAccessClient = keychainAccessClient
     }
 }
@@ -25,7 +29,7 @@ package final class APIDefaultService {
 extension APIDefaultService: APIService {
     package func perform<Request: APIRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?) {
         let accessToken = try await keychainAccessClient.get()
-        let urlRequest = request.build(accessToken: accessToken)
+        let urlRequest = request.build(buildConfig, accessToken: accessToken)
         let (data, urlResponse) = try await session.data(for: urlRequest)
         
         guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {

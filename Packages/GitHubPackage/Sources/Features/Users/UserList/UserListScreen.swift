@@ -25,13 +25,13 @@ package struct UserListScreen: View {
                     }
                 )
             },
+            onAppear: {
+                Task { await store.fetchFirstPage() }
+            },
             onRetryTap: {
                 Task { await store.fetchFirstPage() }
             }
         )
-        .task {
-            await store.fetchFirstPage()
-        }
         .errorAlert(
             error: store.error,
             onDismiss: store.onErrorAlertDismiss

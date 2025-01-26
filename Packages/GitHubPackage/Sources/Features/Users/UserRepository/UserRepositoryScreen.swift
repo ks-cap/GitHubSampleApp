@@ -24,13 +24,13 @@ struct UserRepositoryScreen: View {
                     onSafariDismiss: store.onSafariDismiss
                 )
             },
+            onAppear: {
+                Task { await store.fetchFirstPage() }
+            },
             onRetryTap: {
                 Task { await store.fetchFirstPage() }
             }
         )
-        .task {
-            await store.fetchFirstPage()
-        }
         .errorAlert(
             error: store.error,
             onDismiss: store.onErrorAlertDismiss

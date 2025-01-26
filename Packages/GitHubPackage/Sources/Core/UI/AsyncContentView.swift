@@ -19,15 +19,18 @@ extension LoadingState {
 package struct AsyncContentView<V: Equatable, Success: View>: View {
     private let state: LoadingState<V>
     private let success: (V) -> Success
+    private let onAppear: (() -> Void)?
     private let onRetryTap: (() -> Void)?
     
     package init(
         state: LoadingState<V>,
         @ViewBuilder success: @escaping (V) -> Success,
+        onAppear: (() -> Void)? = nil,
         onRetryTap: (() -> Void)? = nil
     ) {
         self.state = state
         self.success = success
+        self.onAppear = onAppear
         self.onRetryTap = onRetryTap
     }
     
@@ -35,6 +38,7 @@ package struct AsyncContentView<V: Equatable, Success: View>: View {
         switch state {
         case .idle:
             Color.clear
+                .onAppear(perform: onAppear)
 
         case .loading:
             ProgressView()
@@ -44,7 +48,6 @@ package struct AsyncContentView<V: Equatable, Success: View>: View {
             
         case .failure:
             FailureView(onRetryTap: onRetryTap)
-                .padding()
         }
     }
 }

@@ -1,8 +1,7 @@
 import Foundation
-import SwiftUI
 
 package struct BuildConfig: Sendable {
-    public var baseURL: @Sendable () -> URL
+    package var baseURL: @Sendable () -> URL
 }
 
 extension BuildConfig {

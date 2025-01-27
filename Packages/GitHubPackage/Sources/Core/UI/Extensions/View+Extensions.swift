@@ -1,7 +1,7 @@
 import SwiftUI
 
-extension View {
-    package func errorAlert(
+package extension View {
+    func errorAlert(
         error: Error?,
         onDismiss: @escaping () -> Void
     ) -> some View {
@@ -15,10 +15,8 @@ extension View {
             message: { Text(error?.localizedDescription ?? "") }
         )
     }
-}
 
-extension View {
-    package func safariFullScreenCover(
+    func safariFullScreenCover(
         url: URL?,
         onDismiss: @escaping () -> Void
     ) -> some View {

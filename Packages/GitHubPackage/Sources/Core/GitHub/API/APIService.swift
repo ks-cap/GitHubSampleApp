@@ -44,7 +44,7 @@ extension APIDefaultService: APIService {
     }
 }
 
-extension APIDefaultService {
+private extension APIDefaultService {
     func logTracker(request: URLRequest, httpUrlResponse: HTTPURLResponse, data: Data) {
         Logger.standard.debug("""
         🏁🏁🏁🏁🏁 [\(String(httpUrlResponse.statusCode))] \(request.httpMethod ?? "") \(request.debugDescription)

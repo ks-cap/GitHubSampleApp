@@ -1,12 +1,15 @@
 import Foundation
 
 package struct BuildConfig: Sendable {
-    package var baseURL: @Sendable () -> URL
+    package let baseURL: @Sendable () -> URL
 }
 
-extension BuildConfig {
-    package static let live: BuildConfig = {
-        let urlString = Bundle.main.infoDictionary!["GitHubBaseURL"] as! String
-        return Self(baseURL: { URL(string: urlString)! })
-    }()
+package extension BuildConfig {
+    static let live: BuildConfig = Self(
+        baseURL: { .init(string: Bundle.main.baseURLString)! }
+    )
+}
+
+private extension Bundle {
+    var baseURLString: String { object(forInfoDictionaryKey: "GitHubBaseURL") as! String }
 }

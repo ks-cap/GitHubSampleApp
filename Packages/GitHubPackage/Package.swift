@@ -7,22 +7,39 @@ let package = Package(
     name: "GitHubPackage",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "GitHubPackage", targets: ["ProductionApp"])
+        .library(
+            name: "GitHubPackage",
+            targets: [
+                "DevelopApp",
+                "ProductionApp"
+            ]
+        )
     ],
     dependencies: [
         // Libraries
-        .package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "4.2.2")
+        .package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "4.2.2"),
+        .package(url: "https://github.com/uhooi/Logdog", from: "0.4.0")
     ],
     targets: [
         // App layer
         .target(
+            name: "DevelopApp",
+            dependencies: [
+                "DebugFeature",
+                "GitHubCore",
+                "SettingsFeature",
+                "UsersFeature"
+            ],
+            path: "./Sources/App/Develop"
+        ),
+        .target(
             name: "ProductionApp",
             dependencies: [
                 "GitHubCore",
-                "UsersFeature",
-                "SettingsFeature"
+                "SettingsFeature",
+                "UsersFeature"
             ],
-            path: "./Sources/App"
+            path: "./Sources/App/Production"
         ),
         // Build layer
         .target(
@@ -30,6 +47,13 @@ let package = Package(
             path: "./Sources/Build"
         ),
         // Feature layer
+        .target(
+            name: "DebugFeature",
+            dependencies: [
+                .product(name: "LogdogUI", package: "Logdog")
+            ],
+            path: "./Sources/Features/Debug"
+        ),
         .target(
             name: "UsersFeature",
             dependencies: [

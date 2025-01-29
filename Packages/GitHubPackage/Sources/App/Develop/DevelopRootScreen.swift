@@ -1,4 +1,6 @@
 import DebugFeature
+import Pulse
+import PulseProxy
 import SettingsFeature
 import SwiftUI
 import UsersFeature
@@ -9,11 +11,12 @@ public struct DevelopRootScreen: View {
         case settings
         case debug
     }
-   
+
     @State private var currentTab: TabSelecion
 
     public init() {
         currentTab = .users
+        NetworkLogger.enableProxy()
     }
 
     public var body: some View {

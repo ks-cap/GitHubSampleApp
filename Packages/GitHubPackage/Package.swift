@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         // Libraries
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "4.2.2"),
-        .package(url: "https://github.com/uhooi/Logdog", from: "0.4.0")
+        .package(url: "https://github.com/kean/Pulse", from: "5.1.2")
     ],
     targets: [
         // App layer
@@ -28,7 +28,9 @@ let package = Package(
                 "DebugFeature",
                 "GitHubCore",
                 "SettingsFeature",
-                "UsersFeature"
+                "UsersFeature",
+                .product(name: "Pulse", package: "Pulse"),
+                .product(name: "PulseProxy", package: "Pulse")
             ],
             path: "./Sources/App/Develop"
         ),
@@ -50,7 +52,7 @@ let package = Package(
         .target(
             name: "DebugFeature",
             dependencies: [
-                .product(name: "LogdogUI", package: "Logdog")
+                .product(name: "PulseUI", package: "Pulse")
             ],
             path: "./Sources/Features/Debug"
         ),

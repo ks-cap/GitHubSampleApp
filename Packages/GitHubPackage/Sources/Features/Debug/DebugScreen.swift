@@ -1,4 +1,4 @@
-import LogdogUI
+import PulseUI
 import SwiftUI
 
 package struct DebugScreen: View {
@@ -7,8 +7,7 @@ package struct DebugScreen: View {
     package var body: some View {
         NavigationStack {
             Section {
-                LogdogScreen()
-                    .navigationTitle("Log")
+                ConsoleView()
             }
         }
     }

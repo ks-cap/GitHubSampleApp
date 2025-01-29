@@ -1,5 +1,5 @@
 {
-  "originHash" : "d36e03b4ed49dab449db9b266b9ca54484b53a2211640c5f9137f1a9918effa9",
+  "originHash" : "cff0bab9c2a1c5e16b0ecd529f64312698e55da0a6ec7a6483923a9a10e3a496",
   "pins" : [
     {
       "identity" : "keychainaccess",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "logdog",
+      "identity" : "pulse",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/uhooi/Logdog",
+      "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "370ed7d15d12977dbebe35da6186d8cd2a91d605",
-        "version" : "0.4.0"
+        "revision" : "c102aaa266ac69a26d08ee6861da710283988e3b",
+        "version" : "5.1.2"
       }
     }
   ],

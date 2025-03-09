@@ -1,4 +1,4 @@
-import GitHubCore
+import Entity
 import SettingsFeature
 import SwiftUI
 import UICore
@@ -68,7 +68,7 @@ private struct UserListScreenContent: View {
             .refreshable { onRefresh() }
             .navigationTitle("Users")
             .navigationDestination(for: User.self) { user in
-                UserRepositoryScreen(store: .init(argument: .init(user: user)))
+                UserRepoScreen(store: .init(argument: .init(user: user)))
             }
         }
     }

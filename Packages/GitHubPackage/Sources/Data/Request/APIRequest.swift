@@ -1,4 +1,5 @@
 import Build
+import Entity
 import Foundation
 
 package enum HTTPMethod: String {

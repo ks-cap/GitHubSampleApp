@@ -1,9 +1,9 @@
 import Build
+import Entity
 import Foundation
 import KeychainAccessCore
 import LogCore
 
-/// @mockable
 package protocol APIService: Sendable {
     func perform<Request: APIRequest>(request: Request) async throws -> (response: Request.Response, nextPage: Page?)
 }

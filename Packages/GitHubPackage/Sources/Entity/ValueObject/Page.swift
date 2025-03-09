@@ -1,8 +1,8 @@
 import Foundation
 
 package struct Page {
-    struct Const {
-        static let httpHeaderField = "Link"
+    package enum Const {
+        package static let httpHeaderField = "Link"
     }
 
     package let url: URL

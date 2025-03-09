@@ -1,3 +1,5 @@
+import Entity
+
 package struct UserRepositoryFetchRequest {
     let username: String
     let page: Page?
@@ -9,7 +11,7 @@ package struct UserRepositoryFetchRequest {
 }
 
 extension UserRepositoryFetchRequest: APIRequest {
-    package typealias Response = [UserRepository]
+    package typealias Response = [UserRepoResponse]
 
     package var method: HTTPMethod { .get }
     package var path: String { "/users/\(username)/repos" }

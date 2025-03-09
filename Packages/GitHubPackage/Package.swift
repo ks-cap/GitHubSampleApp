@@ -26,7 +26,6 @@ let package = Package(
             name: "DevelopApp",
             dependencies: [
                 "DebugFeature",
-                "GitHubCore",
                 "SettingsFeature",
                 "UsersFeature",
                 .product(name: "Pulse", package: "Pulse"),
@@ -37,7 +36,6 @@ let package = Package(
         .target(
             name: "ProductionApp",
             dependencies: [
-                "GitHubCore",
                 "SettingsFeature",
                 "UsersFeature"
             ],
@@ -59,7 +57,9 @@ let package = Package(
         .target(
             name: "UsersFeature",
             dependencies: [
-                "GitHubCore",
+                "Data",
+                "Domain",
+                "Entity",
                 "UICore",
                 "SettingsFeature"
             ],
@@ -68,22 +68,43 @@ let package = Package(
         .target(
             name: "SettingsFeature",
             dependencies: [
-                "GitHubCore"
+                "Data",
+                "Domain",
+                "Entity"
             ],
             path: "./Sources/Features/Settings"
         ),
-        // Data layer
+        // Domain layer
         .target(
-            name: "GitHubCore",
+            name: "Domain",
             dependencies: [
                 "Build",
-                "LogCore",
-                "KeychainAccessCore"
+                "Entity"
             ],
-            path: "./Sources/Core/GitHub",
+            path: "./Sources/Domain",
             plugins: [
                 .plugin(name: "RunMockolo")
             ]
+        ),
+        // Data layer
+        .target(
+            name: "Data",
+            dependencies: [
+                "Build",
+                "Domain",
+                "Entity",
+                "KeychainAccessCore",
+                "LogCore"
+            ],
+            path: "./Sources/Data",
+            plugins: [
+                .plugin(name: "RunMockolo")
+            ]
+        ),
+        // Entity layer
+        .target(
+            name: "Entity",
+            path: "./Sources/Entity"
         ),
         // Core layer
         .target(

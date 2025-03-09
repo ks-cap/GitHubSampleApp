@@ -1,4 +1,4 @@
-import GitHubCore
+import Entity
 import SwiftUI
 
 struct UserRowView: View {

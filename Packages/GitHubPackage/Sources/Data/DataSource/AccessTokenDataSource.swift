@@ -1,14 +1,11 @@
 import KeychainAccessCore
 
-/// @mockable
-package protocol AccessTokenRepository: Sendable {
+package protocol AccessTokenLocalDataSource: Sendable {
     func fetch() async throws -> String?
     func update(token: String) async throws
 }
 
-// MARK: - AccessTokenDefaultRepository
-
-package final class AccessTokenDefaultRepository {
+package struct AccessTokenDataSource {
     private let client: KeychainAccessClient
 
     package init(client: KeychainAccessClient = KeychainAccessDefaultClient.shared) {
@@ -16,7 +13,7 @@ package final class AccessTokenDefaultRepository {
     }
 }
 
-extension AccessTokenDefaultRepository: AccessTokenRepository {
+extension AccessTokenDataSource: AccessTokenLocalDataSource {
     package func fetch() async throws -> String? {
         try await client.get()
     }

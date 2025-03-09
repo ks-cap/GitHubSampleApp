@@ -1,4 +1,3 @@
-import GitHubCore
 import SwiftUI
 import UICore
 

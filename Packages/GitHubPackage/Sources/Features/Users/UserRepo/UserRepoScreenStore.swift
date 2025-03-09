@@ -1,14 +1,16 @@
+import Data
+import Domain
+import Entity
 import Foundation
-import GitHubCore
 import UICore
 
 @MainActor
 @Observable
-final class UserRepositoryScreenStore {
+final class UserRepoScreenStore {
     let argument: Argument
     private let userReposRepository: UserReposRepository
 
-    private(set) var viewState: LoadingState<[UserRepository]>
+    private(set) var viewState: LoadingState<[UserRepo]>
     private(set) var nextPage: Page?
     private(set) var selectUrl: URL?
     private(set) var error: Error?
@@ -37,7 +39,7 @@ final class UserRepositoryScreenStore {
         do {
             let response = try await userReposRepository.fetch(username: argument.user.login)
             
-            viewState = .success(response.repositories)
+            viewState = .success(response.repos)
             nextPage = response.nextPage
         } catch {
             viewState = .failure
@@ -50,7 +52,7 @@ final class UserRepositoryScreenStore {
 
         do {
             let response = try await userReposRepository.fetch(username: argument.user.login, nextPage: nextPage)
-            let newRepositories = loaded + response.repositories
+            let newRepositories = loaded + response.repos
 
             viewState = .success(newRepositories)
             self.nextPage = response.nextPage
@@ -65,14 +67,14 @@ final class UserRepositoryScreenStore {
         do {
             let response = try await userReposRepository.fetch(username: argument.user.login)
             
-            viewState = .success(response.repositories)
+            viewState = .success(response.repos)
             nextPage = response.nextPage
         } catch {
             self.error = error
         }
     }
 
-    func selectRepository(_ repository: UserRepository) {
+    func selectRepository(_ repository: UserRepo) {
         do {
             let url = try repository.url
             self.selectUrl = url

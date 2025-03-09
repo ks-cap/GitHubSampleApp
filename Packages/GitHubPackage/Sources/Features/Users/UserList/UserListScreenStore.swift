@@ -1,5 +1,7 @@
+import Data
+import Domain
+import Entity
 import Foundation
-import GitHubCore
 import UICore
 
 @MainActor

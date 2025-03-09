@@ -1,18 +1,19 @@
-import GitHubCore
+import Domain
+import Entity
 import SwiftUI
 import UICore
 
-struct UserRepositoryScreen: View {
-    @Bindable var store: UserRepositoryScreenStore
+struct UserRepoScreen: View {
+    @Bindable var store: UserRepoScreenStore
 
     var body: some View {
         AsyncContentView(
             state: store.viewState,
             success: {
-                UserRepositoryScreenContent(
+                UserRepoScreenContent(
                     user: store.argument.user,
                     nextPage: store.nextPage,
-                    repositories: $0,
+                    repos: $0,
                     selectUrl: store.selectUrl,
                     onRefresh: {
                         Task { await store.refresh() }
@@ -38,15 +39,15 @@ struct UserRepositoryScreen: View {
     }
 }
 
-private struct UserRepositoryScreenContent: View {
+private struct UserRepoScreenContent: View {
     let user: User
     let nextPage: Page?
-    let repositories: [UserRepository]
+    let repos: [UserRepo]
     let selectUrl: URL?
 
     let onRefresh: () -> Void
     let onBottomReach: () -> Void
-    let onRepositoryTap: (UserRepository) -> Void
+    let onRepositoryTap: (UserRepo) -> Void
     let onSafariDismiss: () -> Void
 
     var body: some View {
@@ -56,10 +57,10 @@ private struct UserRepositoryScreenContent: View {
             }
 
             Section("Repository") {
-                ForEach(repositories) { repository in
-                    UserRepositoryRowView(
-                        repository: repository,
-                        onTapped: { onRepositoryTap(repository) }
+                ForEach(repos) { repo in
+                    UserRepoRowView(
+                        repository: repo,
+                        onTapped: { onRepositoryTap(repo) }
                     )
                 }
                 
@@ -81,8 +82,8 @@ private struct UserRepositoryScreenContent: View {
     }
 }
 
-private struct UserRepositoryRowView: View {
-    let repository: UserRepository
+private struct UserRepoRowView: View {
+    let repository: UserRepo
     let onTapped: () -> Void
     
     var body: some View {
@@ -125,8 +126,8 @@ private struct UserRepositoryRowView: View {
         avatarUrl: "https://placehold.jp/150x150.png"
     )
     
-    let repositories: [UserRepository] = (1...10).map { id in
-        UserRepository(
+    let repositories: [UserRepo] = (1...10).map { id in
+        UserRepo(
             id: id,
             name: "Repository\(id)",
             htmlUrl: "",
@@ -137,10 +138,10 @@ private struct UserRepositoryRowView: View {
         )
     }
 
-    UserRepositoryScreenContent(
+    UserRepoScreenContent(
         user: user,
         nextPage: nil,
-        repositories: repositories,
+        repos: repositories,
         selectUrl: nil,
         onRefresh: {},
         onBottomReach: {},

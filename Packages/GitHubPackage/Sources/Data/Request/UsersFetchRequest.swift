@@ -1,3 +1,5 @@
+import Entity
+
 package struct UsersFetchRequest {
     let page: Page?
 
@@ -7,7 +9,7 @@ package struct UsersFetchRequest {
 }
 
 extension UsersFetchRequest: APIRequest {
-    package typealias Response = [User]
+    package typealias Response = [UserResponse]
 
     package var method: HTTPMethod { .get }
     package var path: String { "/users" }

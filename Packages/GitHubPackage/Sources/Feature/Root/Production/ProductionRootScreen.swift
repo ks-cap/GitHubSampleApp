@@ -1,36 +1,26 @@
-import DebugFeature
-import Pulse
-import PulseProxy
-import SettingsFeature
+import Factory
 import SwiftUI
-import UsersFeature
 
-public struct DevelopRootScreen: View {
+public struct ProductionRootScreen: View {
     private enum TabSelecion: Hashable {
         case users
         case settings
-        case debug
     }
-
+   
     @State private var currentTab: TabSelecion
 
     public init() {
         currentTab = .users
-        NetworkLogger.enableProxy()
     }
 
     public var body: some View {
         TabView(selection: $currentTab) {
             Tab("Users", systemImage: "list.bullet", value: .users) {
-                UserListScreen(store: .init())
+                ScreenFactory.createUserListScreen()
             }
             
             Tab("Settings", systemImage: "gearshape", value: .settings) {
-                SettingsScreen(store: .init())
-            }
-            
-            Tab("Debug", systemImage: "ladybug", value: .debug) {
-                DebugScreen()
+                ScreenFactory.createSettingsScreen()
             }
         }
     }

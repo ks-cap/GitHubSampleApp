@@ -25,66 +25,37 @@ let package = Package(
         .target(
             name: "DevelopApp",
             dependencies: [
-                "DebugFeature",
-                "SettingsFeature",
-                "UsersFeature",
+                "Factory",
                 .product(name: "Pulse", package: "Pulse"),
                 .product(name: "PulseProxy", package: "Pulse")
             ],
-            path: "./Sources/App/Develop"
+            path: "./Sources/Feature/Root/Develop"
         ),
         .target(
             name: "ProductionApp",
             dependencies: [
-                "SettingsFeature",
-                "UsersFeature"
+                "Factory"
             ],
-            path: "./Sources/App/Production"
+            path: "./Sources/Feature/Root/Production"
         ),
         // Build layer
         .target(
             name: "Build",
             path: "./Sources/Build"
         ),
-        // Feature layer
+        // Factory layer
         .target(
-            name: "DebugFeature",
-            dependencies: [
-                .product(name: "PulseUI", package: "Pulse")
-            ],
-            path: "./Sources/Features/Debug"
-        ),
-        .target(
-            name: "UsersFeature",
+            name: "Factory",
             dependencies: [
                 "Data",
+                "DebugFeature",
                 "Domain",
                 "Entity",
-                "UICore",
-                "SettingsFeature"
+                "KeychainAccessCore",
+                "SettingsFeature",
+                "UsersFeature"
             ],
-            path: "./Sources/Features/Users"
-        ),
-        .target(
-            name: "SettingsFeature",
-            dependencies: [
-                "Data",
-                "Domain",
-                "Entity"
-            ],
-            path: "./Sources/Features/Settings"
-        ),
-        // Domain layer
-        .target(
-            name: "Domain",
-            dependencies: [
-                "Build",
-                "Entity"
-            ],
-            path: "./Sources/Domain",
-            plugins: [
-                .plugin(name: "RunMockolo")
-            ]
+            path: "./Sources/Factory"
         ),
         // Data layer
         .target(
@@ -97,6 +68,47 @@ let package = Package(
                 "LogCore"
             ],
             path: "./Sources/Data",
+            plugins: [
+                .plugin(name: "RunMockolo")
+            ]
+        ),
+        // Feature layer
+        .target(
+            name: "DebugFeature",
+            dependencies: [
+                .product(name: "PulseUI", package: "Pulse")
+            ],
+            path: "./Sources/Feature/Debug"
+        ),
+        .target(
+            name: "UsersFeature",
+            dependencies: [
+                "Data",
+                "Domain",
+                "Entity",
+                "Factory",
+                "UICore",
+                "SettingsFeature"
+            ],
+            path: "./Sources/Feature/Users"
+        ),
+        .target(
+            name: "SettingsFeature",
+            dependencies: [
+                "Data",
+                "Domain",
+                "Entity"
+            ],
+            path: "./Sources/Feature/Settings"
+        ),
+        // Domain layer
+        .target(
+            name: "Domain",
+            dependencies: [
+                "Build",
+                "Entity"
+            ],
+            path: "./Sources/Domain",
             plugins: [
                 .plugin(name: "RunMockolo")
             ]

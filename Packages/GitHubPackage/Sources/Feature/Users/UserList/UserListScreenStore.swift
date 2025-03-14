@@ -13,7 +13,7 @@ package final class UserListScreenStore {
     private(set) var nextPage: Page?
     private(set) var error: Error?
 
-    package init(usersRepository: UsersRepository = UsersDefaultRepository()) {
+    package init(usersRepository: UsersRepository) {
         self.usersRepository = usersRepository
         self.viewState = .idle
         self.error = nil

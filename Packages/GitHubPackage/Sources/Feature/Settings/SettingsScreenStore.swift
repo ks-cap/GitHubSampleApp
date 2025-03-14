@@ -16,8 +16,8 @@ package final class SettingsScreenStore {
     var accessToken: String
 
     package init(
-        accessTokenRepository: AccessTokenRepository = AccessTokenDefaultRepository(),
-        validator: GitHubValidator = GitHubDefaultValidator()
+        accessTokenRepository: AccessTokenRepository,
+        validator: GitHubValidator
     ) {
         self.accessTokenRepository = accessTokenRepository
         self.validator = validator

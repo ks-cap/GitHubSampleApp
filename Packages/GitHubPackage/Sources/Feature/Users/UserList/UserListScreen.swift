@@ -1,4 +1,5 @@
 import Entity
+import Factory
 import SettingsFeature
 import SwiftUI
 import UICore
@@ -68,7 +69,7 @@ private struct UserListScreenContent: View {
             .refreshable { onRefresh() }
             .navigationTitle("Users")
             .navigationDestination(for: User.self) { user in
-                UserRepoScreen(store: .init(argument: .init(user: user)))
+                ScreenFactory.createUserRepoScreen(user: user)
             }
         }
     }

@@ -6,19 +6,19 @@ package protocol AccessTokenLocalDataSource: Sendable {
 }
 
 package struct AccessTokenDataSource {
-    private let client: KeychainAccessClient
+    private let localDataSource: KeychainAccessClient
 
-    package init(client: KeychainAccessClient = KeychainAccessDefaultClient.shared) {
-        self.client = client
+    package init(localDataSource: KeychainAccessClient) {
+        self.localDataSource = localDataSource
     }
 }
 
 extension AccessTokenDataSource: AccessTokenLocalDataSource {
     package func fetch() async throws -> String? {
-        try await client.get()
+        try await localDataSource.get()
     }
 
     package func update(token: String) async throws {
-        try await client.set(token)
+        try await localDataSource.set(token)
     }
 }

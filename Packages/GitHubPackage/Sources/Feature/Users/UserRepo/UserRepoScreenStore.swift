@@ -6,8 +6,8 @@ import UICore
 
 @MainActor
 @Observable
-final class UserRepoScreenStore {
-    let argument: Argument
+package final class UserRepoScreenStore {
+    let user: User
     private let userReposRepository: UserReposRepository
 
     private(set) var viewState: LoadingState<[UserRepo]>
@@ -15,16 +15,12 @@ final class UserRepoScreenStore {
     private(set) var selectUrl: URL?
     private(set) var error: Error?
 
-    struct Argument {
-        let user: User
-    }
-
-    init(
-        argument: Argument,
-        userReposRepository: UserReposRepository = UserReposDefaultRepository()
+    package init(
+        user: User,
+        userReposRepository: UserReposRepository
     ) {
         self.userReposRepository = userReposRepository
-        self.argument = argument
+        self.user = user
         self.viewState = .idle
         self.nextPage = nil
         self.selectUrl = nil
@@ -37,7 +33,7 @@ final class UserRepoScreenStore {
         viewState = .loading
 
         do {
-            let response = try await userReposRepository.fetch(username: argument.user.login)
+            let response = try await userReposRepository.fetch(username: user.login)
             
             viewState = .success(response.repos)
             nextPage = response.nextPage
@@ -51,7 +47,7 @@ final class UserRepoScreenStore {
         guard case .success(let loaded) = viewState, let nextPage else { return }
 
         do {
-            let response = try await userReposRepository.fetch(username: argument.user.login, nextPage: nextPage)
+            let response = try await userReposRepository.fetch(username: user.login, nextPage: nextPage)
             let newRepositories = loaded + response.repos
 
             viewState = .success(newRepositories)
@@ -65,7 +61,7 @@ final class UserRepoScreenStore {
         guard viewState != .loading else { return }
 
         do {
-            let response = try await userReposRepository.fetch(username: argument.user.login)
+            let response = try await userReposRepository.fetch(username: user.login)
             
             viewState = .success(response.repos)
             nextPage = response.nextPage

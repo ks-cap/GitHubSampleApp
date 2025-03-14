@@ -3,10 +3,14 @@ import Entity
 import SwiftUI
 import UICore
 
-struct UserRepoScreen: View {
+package struct UserRepoScreen: View {
     @Bindable var store: UserRepoScreenStore
 
-    var body: some View {
+    package init(store: UserRepoScreenStore) {
+        self.store = store
+    }
+
+    package var body: some View {
         AsyncContentView(
             state: store.viewState,
             success: {

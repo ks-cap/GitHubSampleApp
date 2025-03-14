@@ -3,7 +3,7 @@ import Domain
 package final class AccessTokenDefaultRepository {
     private let localDataSource: AccessTokenLocalDataSource
     
-    package init(localDataSource: AccessTokenLocalDataSource = AccessTokenDataSource()) {
+    package init(localDataSource: AccessTokenLocalDataSource) {
         self.localDataSource = localDataSource
     }
 }

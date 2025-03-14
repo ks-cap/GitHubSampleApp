@@ -4,7 +4,7 @@ import Entity
 package final class UsersDefaultRepository {
     private let remoteDataSource: UsersRemoteDataSource
     
-    package init(remoteDataSource: UsersRemoteDataSource = UsersAlamofireDataSource()) {
+    package init(remoteDataSource: UsersRemoteDataSource) {
         self.remoteDataSource = remoteDataSource
     }
 }

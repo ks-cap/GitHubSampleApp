@@ -7,7 +7,7 @@ package protocol UserReposRemoteDataSource: Sendable {
 package struct UserReposAlamofireDataSource {
     private let service: APIService
     
-    package init(service: APIService = APIDefaultService()) {
+    package init(service: APIService) {
         self.service = service
     }
 }
